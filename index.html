@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital First Responder Lab | Chaunda C. Dallas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #C1121F;
+      --red-dim: #7a0c13;
+      --white: #F4F1EC;
+      --off-white: #e8e3da;
+      --dark: #0a0a0a;
+      --dark-2: #111111;
+      --dark-3: #1a1a1a;
+      --gray: #888;
+      --mono: 'DM Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+      --display: 'Bebas Neue', sans-serif;
+    }
+     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--white);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+    
+   /* ── HEADER ── */
+    header {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 4rem 2rem 3rem;
+      overflow: hidden;
+      border-bottom: 1px solid #222;
+    }
+
+      .header-content { position: relative; z-index: 1; max-width: 900px; }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tag::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--red);
+    }
+
+     h1 {
+      font-family: var(--display);
+      font-size: clamp(4rem, 12vw, 10rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      margin-bottom: 2rem;
+    }
+
+    h1 span { color: var(--red); }
+
+    .header-sub {
+      font-size: 1.05rem;
+      color: #aaa;
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .header-meta {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: #555;
+      letter-spacing: 0.1em;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+     .pulse-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: var(--red);
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      animation: pulse 2s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: #444;
+      letter-spacing: 0.15em;
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+    
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1e1e1e;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+    }
+
+    .nav-brand {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--red);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+     .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: #666;
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+      .section-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #222;
+    }
+
+      /* ── PHILOSOPHY ── */
+    #philosophy { background: var(--dark-2); }
+
+    .quote-block {
+      border-left: 2px solid var(--red);
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+      background: rgba(193,18,31,0.04);
+    }
+
+    .quote-block p {
+      font-family: var(--display);
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      line-height: 1.2;
+      color: var(--white);
+      letter-spacing: 0.03em;
+    }
+
+    .body-text {
+      font-size: 1rem;
+      color: #999;
+      line-height: 1.8;
+      max-width: 680px;
+    }
+    
+     .body-text + .body-text { margin-top: 1.2rem; }
+
+    /* ── SCENARIOS ── */
+    #scenarios { background: var(--dark); }
+
+    .scenarios-grid {
+      display: grid;
+      gap: 1px;
+      background: #1a1a1a;
+      border: 1px solid #1a1a1a;
+    }
+    
+    .scenario-card {
+      background: var(--dark);
+      padding: 2.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scenario-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--red);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+      transform-origin: bottom;
+    }
+
+     .scenario-card:hover { background: var(--dark-3); }
+    .scenario-card:hover::before { transform: scaleY(1); }
+    .scenario-card.active { background: var(--dark-3); }
+    .scenario-card.active::before { transform: scaleY(1); }
+
+    .scenario-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+
+    .scenario-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--red);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.5rem;
+    }
+
+     .scenario-title {
+      font-family: var(--display);
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    .severity {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+     .severity.critical { color: var(--red); border-color: var(--red); }
+    .severity.high { color: #e07b00; border-color: #e07b00; }
+    .severity.medium { color: #b8a000; border-color: #b8a000; }
+
+    .scenario-desc {
+      font-size: 0.9rem;
+      color: #777;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .scenario-detail {
+      display: none;
+      margin-top: 1.5rem;
+      border-top: 1px solid #222;
+      padding-top: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+      .scenario-card.active .scenario-detail { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .failure-chain {
+      margin-bottom: 2rem;
+    }
+
+    .failure-chain h4 {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+     .chain-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .chain-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      position: relative;
+    }
+
+    .chain-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 2rem;
+      bottom: -0.25rem;
+      width: 1px;
+      background: #2a2a2a;
+    }
+
+     .step-dot {
+      width: 23px;
+      height: 23px;
+      border-radius: 50%;
+      border: 1px solid #333;
+      background: var(--dark);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--red);
+      margin-top: 0.1rem;
+    }
+
+    .step-text {
+      font-size: 0.88rem;
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    .step-text strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+     .framework-map {
+      background: var(--dark-2);
+      border: 1px solid #222;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .framework-map h4 {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .framework-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+      .framework-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: #888;
+      border: 1px solid #2a2a2a;
+      padding: 0.25rem 0.6rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── DECISION MODE ── */
+    #decision { background: var(--dark-2); }
+
+    .decision-wrapper {
+      border: 1px solid #222;
+      background: var(--dark);
+    }
+
+    .decision-top {
+      padding: 2rem 2.5rem;
+      border-bottom: 1px solid #1a1a1a;
+      background: rgba(193,18,31,0.03);
+    }
+
+     .decision-top h3 {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .decision-top p {
+      font-size: 0.88rem;
+      color: #666;
+      font-family: var(--mono);
+    }
+
+    .scenario-select-bar {
+      padding: 1.5rem 2.5rem;
+      border-bottom: 1px solid #1a1a1a;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+      .scene-btn {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      border: 1px solid #2a2a2a;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .scene-btn:hover, .scene-btn.active {
+      border-color: var(--red);
+      color: var(--white);
+      background: rgba(193,18,31,0.08);
+    }
+
+     .decision-body { padding: 2.5rem; }
+
+    .situation-box {
+      background: #0d0d0d;
+      border-left: 2px solid var(--red);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: #bbb;
+      line-height: 1.7;
+    }
+
+    .situation-box .time-stamp {
+      color: var(--red);
+      margin-bottom: 0.5rem;
+      font-size: 0.7rem;
+    }
+
+     .choices h4 {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .choice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+      .choice-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid #222;
+      background: transparent;
+      color: #aaa;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .choice-btn:hover {
+      border-color: #333;
+      color: var(--white);
+      background: rgba(255,255,255,0.02);
+    }
+
+      .choice-btn.selected-correct {
+      border-color: #2a6e2a;
+      background: rgba(42,110,42,0.08);
+      color: var(--white);
+    }
+
+    .choice-btn.selected-wrong {
+      border-color: var(--red-dim);
+      background: rgba(193,18,31,0.06);
+      color: var(--white);
+    }
+
+    .choice-btn.reveal-correct {
+      border-color: #2a6e2a;
+      background: rgba(42,110,42,0.05);
+    }
+
+    .choice-letter {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--red);
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+      .feedback-box {
+      display: none;
+      padding: 1.5rem;
+      border: 1px solid #222;
+      background: #0d0d0d;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.show { display: block; }
+
+    .feedback-box .fb-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .feedback-box.correct .fb-label { color: #4caf50; }
+    .feedback-box.wrong .fb-label { color: var(--red); }
+
+    .feedback-box p {
+      font-size: 0.88rem;
+      color: #aaa;
+      line-height: 1.7;
+    }
+
+      .feedback-box .clinical-note {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #1e1e1e;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .reset-btn {
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.25rem;
+      border: 1px solid #333;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+     .reset-btn:hover { border-color: var(--red); color: var(--white); }
+
+    /* ── ABOUT ── */
+    #about { background: var(--dark); border-top: 1px solid #1a1a1a; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-left h2 {
+      font-family: var(--display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.05;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5rem;
+    }
+
+     .about-left h2 span { color: var(--red); }
+
+    .about-left p {
+      font-size: 0.92rem;
+      color: #888;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .credentials {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .cred-item {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: #555;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+      .cred-item::before {
+      content: '▸';
+      color: var(--red);
+    }
+
+    .about-right {
+      padding-top: 1rem;
+    }
+
+    .stat-block {
+      border-top: 1px solid #1e1e1e;
+      padding: 1.25rem 0;
+    }
+
+    .stat-block:last-child { border-bottom: 1px solid #1e1e1e; }
+
+    .stat-num {
+      font-family: var(--display);
+      font-size: 2.5rem;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+     .stat-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: #555;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark-2);
+      border-top: 1px solid #1a1a1a;
+      padding: 2.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+    }
+
+       .footer-brand span { color: var(--red); }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: #555;
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: #333;
+      letter-spacing: 0.08em;
+    }
+
+        /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .nav-links { display: none; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">DFR Lab</div>
+  <ul class="nav-links">
+    <li><a href="#scenarios">Scenarios</a></li>
+    <li><a href="#decision">Decision Mode</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <div class="header-bg"></div>
+  <div class="header-grid"></div>
+  <div class="header-content">
+    <div class="tag"><span class="pulse-dot"></span> Live | IoMT Risk Education Platform</div>
+    <h1>Digital<br>First<br><span>Responder</span><br>Lab</h1>
+    <p class="header-sub">
+      Where connected medical systems and AI actually fail — not in theory,
+      but in the moment when the decision still has to be made.
+    </p>
+    <div class="header-meta">
+      <span>NIST AI RMF Aligned</span>
+      <span>HIPAA Context</span>
+      <span>IoMT Device Scenarios</span>
+      <span>Clinical Decision Framework</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll to explore</div>
+</header>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="container">
+    <div class="section-label">Core Philosophy</div>
+    <div class="quote-block">
+      <p>At 2am in the ER, I'm not waiting on a dashboard. Healthcare doesn't pause for data validation. Our security frameworks need to stop assuming it does.</p>
+    </div>
+    <p class="body-text">
+      Most healthcare cybersecurity focuses on protecting data. This lab focuses on what happens
+      when the technology keeping a person alive fails — in real time, under real conditions,
+      with real consequences.
+    </p>
+    <p class="body-text">
+      The scenarios here are not hypothetical. They are built from 28+ years of clinical emergency
+      medicine, interventional radiology, hyperbarics, and pediatric care — and from being a
+      device-dependent patient myself.
+    </p>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section id="scenarios">
+  <div class="container">
+    <div class="section-label">Failure Scenarios</div>
+    <div class="scenarios-grid">
+
+      <!-- SCENARIO 1 -->
+      <div class="scenario-card" onclick="toggleScenario(this)">
+        <div class="scenario-num">01 / SCENARIO</div>
+        <div class="scenario-header">
+          <div class="scenario-title">Silent Battery Failure<br>Portable O₂ Concentrator</div>
+          <div class="severity critical">Critical</div>
+        </div>
+        <p class="scenario-desc">
+          Battery indicator reports full charge. Device loses power within minutes of disconnection.
+          Patient has no backup oxygen source. Power infrastructure is unstable.
+        </p>
+        <div class="scenario-detail">
+          <div class="failure-chain">
+            <h4>Failure Chain</h4>
+            <div class="chain-steps">
+              <div class="chain-step">
+                <div class="step-dot">1</div>
+                <div class="step-text"><strong>Device reports false state.</strong> Battery management system shows full charge. Actual runtime: 2–3 minutes.</div>
+              </div>
+                 <div class="chain-step">
+                <div class="step-dot">2</div>
+                <div class="step-text"><strong>Patient trusts the indicator.</strong> No manual verification protocol exists. No alert threshold configured.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">3</div>
+                <div class="step-text"><strong>Power event occurs.</strong> Grid outage, storm, or infrastructure failure disconnects AC power.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">4</div>
+                <div class="step-text"><strong>Battery depletes in under 3 minutes.</strong> No backup tank. No secondary concentrator. No escalation path.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">5</div>
+                <div class="step-text"><strong>Patient enters oxygen deprivation.</strong> PAH + hypoxia. Cascading physiological failure begins silently.</div>
+              </div>
+            </div>
+          </div>
+          <div class="framework-map">
+            <h4>Framework Gaps Identified</h4>
+            <div class="framework-tags">
+              <span class="framework-tag">NIST 800-53 SI-13 (Predictable Failure)</span>
+              <span class="framework-tag">NIST AI RMF MANAGE 2.2</span>
+              <span class="framework-tag">HIPAA § 164.310(a)(2)(i)</span>
+              <span class="framework-tag">FDA 21 CFR Part 820</span>
+              <span class="framework-tag">IEC 62443-4-2 CR 3.1</span>
+              <span class="framework-tag">Home Care Gap: No Redundancy Standard</span>
+            </div>
+                 </div>
+          <p class="body-text" style="font-size:0.85rem;">
+            <strong style="color:var(--white)">What should exist:</strong> Real-time battery health telemetry with verified discharge testing,
+            mandatory backup protocols for single-source oxygen-dependent patients, infrastructure
+            dependency mapping for high-risk home medical devices, and emergency registry
+            enrollment at the local utility and fire department level.
+          </p>
+        </div>
+      </div>
+
+      <!-- SCENARIO 2 -->
+      <div class="scenario-card" onclick="toggleScenario(this)">
+        <div class="scenario-num">02 / SCENARIO</div>
+        <div class="scenario-header">
+          <div class="scenario-title">AI Triage Override<br>Emergency Department</div>
+          <div class="severity critical">Critical</div>
+        </div>
+        <p class="scenario-desc">
+          AI-assisted triage system flags a patient as low acuity. Clinician overrides based on
+          clinical observation. System logs the override as anomalous. Alert fatigue follows.
+        </p>
+          <div class="scenario-detail">
+          <div class="failure-chain">
+            <h4>Failure Chain</h4>
+            <div class="chain-steps">
+              <div class="chain-step">
+                <div class="step-dot">1</div>
+                <div class="step-text"><strong>AI model scores patient: low risk.</strong> Model trained on structured EHR data. Misses nonverbal cues, skin color change, work of breathing.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">2</div>
+                <div class="step-text"><strong>Clinician trusts observation over score.</strong> Escalates immediately. Patient is actually critical.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">3</div>
+                <div class="step-text"><strong>System flags clinician override as deviation.</strong> Algorithm treats experienced clinical judgment as an error signal.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">4</div>
+                <div class="step-text"><strong>Override data used to retrain model.</strong> Model learns to suppress clinical intuition patterns. Future accuracy degrades silently.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">5</div>
+                <div class="step-text"><strong>Next clinician defers to AI.</strong> Alert fatigue + institutional trust in system. Patient harm occurs.</div>
+              </div>
+            </div>
+             </div>
+          <div class="framework-map">
+            <h4>Framework Gaps Identified</h4>
+            <div class="framework-tags">
+              <span class="framework-tag">NIST AI RMF GOVERN 1.1</span>
+              <span class="framework-tag">NIST AI RMF MAP 3.5</span>
+              <span class="framework-tag">FDA AI/ML Action Plan 2021</span>
+              <span class="framework-tag">ONC HTI-1 Rule</span>
+              <span class="framework-tag">Human Oversight Gap</span>
+              <span class="framework-tag">Feedback Loop Risk</span>
+            </div>
+          </div>
+ <p class="body-text" style="font-size:0.85rem;">
+            <strong style="color:var(--white)">What should exist:</strong> Clinical override logging that distinguishes expert judgment from error,
+            model retraining governance that requires human review before incorporating override data,
+            mandatory human-in-the-loop thresholds for high-acuity clinical AI systems, and
+            regular red-team exercises that test AI performance against experienced clinician
+            baseline decisions.
+          </p>
+        </div>
+      </div>
+
+      <!-- SCENARIO 3 -->
+      <div class="scenario-card" onclick="toggleScenario(this)">
+        <div class="scenario-num">03 / SCENARIO</div>
+        <div class="scenario-header">
+          <div class="scenario-title">Infusion Pump<br>Network Compromise</div>
+          <div class="severity high">High</div>
+        </div>
+        <p class="scenario-desc">
+          Networked infusion pump receives unauthorized parameter update during active medication
+          delivery. Nurse administering care is managing four other patients simultaneously.
+        </p>
+        <div class="scenario-detail">
+          <div class="failure-chain">
+            <h4>Failure Chain</h4>
+            <div class="chain-steps">
+              <div class="chain-step">
+            <div class="step-dot">1</div>
+                <div class="step-text"><strong>Pump connected to clinical network.</strong> Drug library update mechanism lacks mutual authentication. Lateral movement from prior breach.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">2</div>
+                <div class="step-text"><strong>Unauthorized rate parameter pushed.</strong> Change falls within acceptable range. No immediate alarm triggered.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">3</div>
+                <div class="step-text"><strong>Nurse managing four patients.</strong> Controlled chaos. Visual check interval is 20+ minutes. No bedside alert.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">4</div>
+                <div class="step-text"><strong>Patient receives incorrect dose over time.</strong> Subtle presentation. Clinical deterioration begins before detection.</div>
+              </div>
+              <div class="chain-step">
+                <div class="step-dot">5</div>
+                <div class="step-text"><strong>Root cause is IT investigation, not clinical.</strong> 6–8 hours to identify source. Evidence degraded. Incident not reported to FDA.</div>
+              </div>
+            </div>
+          </div>
+          <div class="framework-map">
+            <h4>Framework Gaps Identified</h4>
+            <div class="framework-tags">
+           <span class="framework-tag">NIST 800-82 Rev 3 (OT Security)</span>
+              <span class="framework-tag">FDA Cybersecurity Guidance 2023</span>
+              <span class="framework-tag">HIPAA § 164.312(b) Audit Controls</span>
+              <span class="framework-tag">IEC 80001-1 Risk Management</span>
+              <span class="framework-tag">Network Segmentation Gap</span>
+              <span class="framework-tag">MDS² Documentation Gap</span>
+            </div>
+          </div>
+          <p class="body-text" style="font-size:0.85rem;">
+            <strong style="color:var(--white)">What should exist:</strong> Mutual TLS authentication for all pump parameter updates,
+            real-time anomaly detection on infusion rate changes against prescription baseline,
+            clinical workflow-aware alerting that accounts for nurse-to-patient ratios,
+            mandatory FDA MedWatch reporting integration, and post-incident forensic
+            preservation protocols for IoMT devices.
+          </p>
+        </div>
+      </div>
+
+         </div>
+  </div>
+</section>
+
+<!-- DECISION MODE -->
+<section id="decision">
+  <div class="container">
+    <div class="section-label">Decision Mode</div>
+    <div class="decision-wrapper">
+      <div class="decision-top">
+        <h3>You Are The Responder. What Do You Do?</h3>
+        <p>Select a scenario. Read the situation. Make the call.</p>
+      </div>
+      <div class="scenario-select-bar">
+        <button class="scene-btn active" onclick="loadDecision(0, this)">01 — Battery Failure</button>
+        <button class="scene-btn" onclick="loadDecision(1, this)">02 — AI Triage</button>
+        <button class="scene-btn" onclick="loadDecision(2, this)">03 — Infusion Pump</button>
+      </div>
+      <div class="decision-body">
+        <div class="situation-box" id="situation-box"></div>
+        <div class="choices">
+          <h4>Your Response</h4>
+          <div class="choice-list" id="choice-list"></div>
+        </div>
+        <div class="feedback-box" id="feedback-box">
+          <div class="fb-label" id="fb-label"></div>
+          <p id="fb-text"></p>
+   <div class="clinical-note" id="fb-clinical"></div>
+          <button class="reset-btn" onclick="resetDecision()">↺ Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">About This Lab</div>
+    <div class="about-grid">
+      <div class="about-left">
+        <h2>Built from<br><span>Lived</span><br>Reality.</h2>
+        <p>
+          This lab was created by Chaunda C. Dallas — healthcare cybersecurity consultant,
+          IoMT risk specialist, and former emergency medicine professional with 28+ years
+          of clinical experience.
+        </p>
+        <p>
+             The scenarios here are not theoretical exercises. They are built from direct clinical
+          experience across emergency medicine, interventional radiology, hyperbarics, and
+          pediatric care — and from being a device-dependent patient managing pulmonary
+          hypertension with a portable oxygen concentrator daily.
+        </p>
+        <p>
+          Featured Defender in the Semperis documentary
+          <em>'Midnight in the War Room'</em> — premiering Black Hat USA 2026.
+        </p>
+        <div class="credentials">
+          <div class="cred-item">MS Information Technology / Cybersecurity — Kennesaw State University</div>
+          <div class="cred-item">Healthcare Cybersecurity Consultant | Chaunda C. Dallas LLC</div>
+          <div class="cred-item">WiCyS Technical Mentor — 3rd Consecutive Year</div>
+          <div class="cred-item">CAGE: 18D81 | UEI: KV2BR8QU36J7</div>
+          <div class="cred-item">chaunda@cyberaio.com</div>
+        </div>
+      </div>
+      <div class="about-right">
+        <div class="stat-block">
+          <div class="stat-num">28+</div>
+          <div class="stat-label">Years Clinical Emergency Medicine</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Core Failure Scenarios (v1.0)</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-num">6</div>
+          <div class="stat-label">Regulatory Frameworks Mapped Per Scenario</div>
+        </div>
+<div class="stat-block">
+          <div class="stat-num">0</div>
+          <div class="stat-label">Hypothetical Scenarios — All Built from Reality</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">DFR <span>Lab</span></div>
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/chaundacdallas" target="_blank">LinkedIn</a>
+    <a href="https://chaundacdallas.com" target="_blank">Website</a>
+  </div>
+  <div class="footer-copy">© 2026 Chaunda C. Dallas LLC — All rights reserved</div>
+</footer>
+
+<script>
+  // ── SCENARIO TOGGLE ──
+  function toggleScenario(card) {
+    const isActive = card.classList.contains('active');
+    document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+    if (!isActive) card.classList.add('active');
+  }
+
+  // ── DECISION MODE DATA ──
+  const decisions = [
+    {
+      situation: `<div class="time-stamp">02:14 — HOME ENVIRONMENT / POWER EVENT</div>
+It is 2:14am. A severe storm has knocked out grid power to your neighborhood.
+You are oxygen-dependent, managing pulmonary hypertension with a portable concentrator.
+Your battery indicator showed full charge before bed. You switch to battery mode.
+The device shuts off after 2 minutes and 47 seconds.
+No backup tank. No generator. Nearest hospital: 14 minutes.
+<br><br>Your O₂ sat is dropping. You have a phone. What do you do first?`,
+      choices: [
+        { text: "Call 911 immediately and get to the floor to conserve energy while waiting.", correct: true },
+        { text: "Try to drive yourself to the ER — you know the route and feel okay right now.", correct: false },
+        { text: "Call a neighbor to ask if they have oxygen or can drive you.", correct: false },
+        { text: "Wait 5 minutes to see if the power comes back on before deciding.", correct: false }
+      ],
+      correct_feedback: "Correct clinical decision. 911 ensures oxygen-capable EMS response en route to you. Getting low conserves your oxygen demand. Do not drive — hypoxia impairs judgment before you feel impaired. Time is the variable you cannot get back.",
+      wrong_feedback: "This decision loses critical time or increases oxygen demand. In hypoxic emergencies, the correct move is always: call 911, reduce exertion, stay low, stay calm. Every minute of delay is physiological cost.",
+      clinical: "CLINICAL NOTE: This is a real failure chain — false battery state reporting on a life-critical home medical device with no backup redundancy and no infrastructure emergency registry. Most home care frameworks do not mandate backup protocols for single-source oxygen patients."
+    },
+    {
+situation: `<div class="time-stamp">01:47 — EMERGENCY DEPARTMENT / HIGH VOLUME SHIFT</div>
+A 58-year-old male presents to triage. Chief complaint: "feeling off."
+Your AI triage system scores him: LOW ACUITY. Wait time assigned: 2.5 hours.
+You observe: slightly ashen color, irregular breathing pattern, diaphoretic.
+The system has no input fields for these observations.
+Your charge nurse tells you the waiting room is at 140% capacity.
+<br><br>What do you do?`,
+      choices: [
+        { text: "Trust the AI score — the system has been accurate 94% of the time this quarter.", correct: false },
+        { text: "Override the AI score, escalate immediately, and document your clinical rationale.", correct: true },
+        { text: "Ask the patient more questions and reassess in 20 minutes.", correct: false },
+        { text: "Flag it to the charge nurse and let her make the call — you're not sure.", correct: false }
+      ],
+      correct_feedback: "Correct. Clinical observation supersedes algorithmic scoring in high-acuity presentations. Ashen color, diaphoresis, and irregular breathing are not structured data fields — they are what experienced eyes catch that models cannot. Document everything. The override log is your protection and the system's feedback.",
+      wrong_feedback: "94% accuracy means 6 in 100 patients are wrong. This patient is showing three nonverbal critical indicators. AI triage systems are not trained on clinical intuition — they are trained on structured input. When what you see contradicts the score, the score is wrong.",
+      clinical: "CLINICAL NOTE: AI systems in high-acuity clinical environments require mandatory human override capability with expert-judgment logging — not error flagging. Treating experienced clinical observation as a deviation signal is a design failure, not a clinician failure."
+    },
+    {
+situation: `<div class="time-stamp">03:22 — MED/SURG UNIT / OVERNIGHT SHIFT</div>
+You are a security analyst on call. The SOC receives an anomaly alert:
+an infusion pump on the oncology floor has received two parameter updates
+in the last 40 minutes — neither initiated from the nursing station.
+The pump is actively delivering chemotherapy.
+The on-call nurse has 5 patients. She has not been alerted.
+<br><br>You have no pump isolation protocol. What is your first action?`,
+      choices: [
+        { text: "Begin forensic investigation on the network to trace the source of the update.", correct: false },
+        { text: "Alert the charge nurse immediately with the pump ID and flag it as potentially compromised — clinical safety first.", correct: true },
+        { text: "Isolate the pump from the network remotely to stop further unauthorized updates.", correct: false },
+        { text: "Escalate to your manager and wait for authorization before taking action.", correct: false }
+      ],
+      correct_feedback: "Correct sequence. Patient safety precedes forensic preservation in active clinical incidents. The nurse needs the pump ID and the flag — she makes the clinical call. Your job in this moment is to get the right information to the right person in under 60 seconds. Forensics comes after the patient is safe.",
+      wrong_feedback: "Forensic investigation and remote isolation are secondary priorities when a patient is actively receiving a potentially compromised drug delivery. Clinical harm is happening in real time. The first call is always to the bedside.",
+      clinical: "CLINICAL NOTE: IoMT incident response requires clinical-first protocols. Most SOC playbooks are built for IT environments — they do not account for active patient harm scenarios. This is the gap. Security teams and clinical teams need joint tabletop exercises before the incident, not after."
+    }
+  ];
+
+   let currentDecision = 0;
+  let answered = false;
+
+  function loadDecision(index, btn) {
+    currentDecision = index;
+    answered = false;
+    document.querySelectorAll('.scene-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderDecision();
+  }
+
+  function renderDecision() {
+    const d = decisions[currentDecision];
+    document.getElementById('situation-box').innerHTML = d.situation;
+    const list = document.getElementById('choice-list');
+    const letters = ['A', 'B', 'C', 'D'];
+    list.innerHTML = d.choices.map((c, i) => `
+      <button class="choice-btn" onclick="selectChoice(${i})">
+        <span class="choice-letter">${letters[i]}</span>
+        <span>${c.text}</span>
+      </button>
+    `).join('');
+    const fb = document.getElementById('feedback-box');
+    fb.className = 'feedback-box';
+    fb.classList.remove('show');
+  }
+
+   function selectChoice(index) {
+    if (answered) return;
+    answered = true;
+    const d = decisions[currentDecision];
+    const chosen = d.choices[index];
+    const buttons = document.querySelectorAll('.choice-btn');
+    buttons.forEach((btn, i) => {
+      if (d.choices[i].correct) btn.classList.add('reveal-correct');
+    });
+    if (chosen.correct) {
+      buttons[index].classList.add('selected-correct');
+    } else {
+      buttons[index].classList.add('selected-wrong');
+    }
+    const fb = document.getElementById('feedback-box');
+    const label = document.getElementById('fb-label');
+    const text = document.getElementById('fb-text');
+    const clinical = document.getElementById('fb-clinical');
+    if (chosen.correct) {
+      fb.className = 'feedback-box correct show';
+      label.textContent = '✓ Correct Decision';
+      text.textContent = d.correct_feedback;
+    } else {
+      fb.className = 'feedback-box wrong show';
+      label.textContent = '✗ Reconsider This Approach';
+      text.textContent = d.wrong_feedback;
+    }
+    clinical.textContent = d.clinical;
+  }
+
+   function resetDecision() {
+    answered = false;
+    renderDecision();
+  }
+
+  // Init decision mode
+  renderDecision();
+</script>
+</body>
+</html>
+
+
+
+    
+    
+
+
+
+
+
+    
+    
+    

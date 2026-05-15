@@ -1116,7 +1116,7 @@ body.student-mode .footer-brand span { color: #1a7fc1; }
 .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
 .footer-links a { font-family: var(--mono); font-size: 0.6rem; color: #444; text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
 .footer-links a:hover { color: var(--white); }
-.footer-copy { font-family: var(--mono); font-size: 0.58rem; color: #2a2a2a; letter-spacing: 0.08em; }
+.footer-copy { font-family: var(--mono); font-size: 0.58rem; color: #555; letter-spacing: 0.08em; }
 
 @media (max-width: 768px) {
   .detail-grid, .about-grid, .careers-grid, .resources-grid, .explainer-grid { grid-template-columns: 1fr; }
@@ -1465,16 +1465,89 @@ body.student-mode .footer-brand span { color: #1a7fc1; }
     <div class="cs-badge">In Development</div>
   </div>
 
-  <div class="scenario-card coming-soon">
+  <!-- S5 FULL BUILD -->
+  <div class="scenario-card" onclick="toggleScenario(this)">
     <div class="scenario-num">05 / SCENARIO</div>
     <div class="scenario-header">
-      <div class="scenario-title">Wearable Data Spoofing<br>Athletic & Patient Systems</div>
+      <div class="scenario-title">Wearable Data Spoofing<br>Athlete & Patient Dual Perspective</div>
       <div class="sev high">High</div>
     </div>
-    <p class="scenario-desc">Your Apple Watch says you're fine. The clinical system believes it. You're not fine.</p>
-    <div class="cs-badge">In Development</div>
+    <p class="scenario-desc">Your Apple Watch says you're fine. The clinical system believes it. The coach clears you to play. You are not fine. Two perspectives — the clinician receiving spoofed data, and the patient whose data is being manipulated — same failure, different stakes.</p>
+    <p class="student-desc">Smartwatches and fitness trackers measure your heart rate, oxygen levels, and activity. But what if someone could fake that data? What if your watch said your heart rate was normal when it wasn't? What decisions would get made based on wrong information?</p>
+    <div class="scenario-detail">
+      <div class="device-explainer">
+        <h4>⌚ About Wearable Health Devices</h4>
+        <p>Consumer wearables like the <strong>Apple Watch</strong> now include medical-grade sensors — ECG, blood oxygen (SpO2), heart rate variability, fall detection, and irregular rhythm notifications. These devices are increasingly used in clinical decision-making, athlete performance monitoring, remote patient monitoring programs, and insurance wellness programs. The data they generate is trusted. That trust is the attack surface.</p>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-block">
+          <h4>Failure Chain — Perspective 1: The Clinician</h4>
+          <div class="chain-step">
+            <div class="step-dot">1</div>
+            <div class="step-text"><strong>Patient enrolled in remote monitoring program.</strong> Apple Watch syncs health data to EHR via HealthKit integration. Clinician reviews wearable data between appointments.</div>
+            <div class="step-plain">The patient wears their Apple Watch every day and it automatically sends health data to their doctor. The doctor uses this data to make decisions about their care.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">2</div>
+            <div class="step-text"><strong>Data transmission intercepted or application layer compromised.</strong> Spoofed biometric values injected — falsely normal heart rate, falsely normal SpO2. Clinician receives clean data.</div>
+            <div class="step-plain">An attacker intercepts the data being sent and replaces it with fake normal numbers. The doctor receives data that looks perfectly healthy.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">3</div>
+            <div class="step-text"><strong>Clinical decision made on false baseline.</strong> Medication dosage adjusted downward based on "improving" data. Follow-up appointment deferred. Warning signs masked.</div>
+            <div class="step-plain">Based on the fake data, the doctor decides the patient is doing better. They reduce medication and push back the next appointment. But the patient hasn't actually improved.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">4</div>
+            <div class="step-text"><strong>Patient deteriorates without clinical awareness.</strong> Real condition worsening. No alert fires. Next appointment is 6 weeks out. Emergency presentation follows.</div>
+            <div class="step-plain">The patient keeps getting worse. But the doctor doesn't know because the data looks fine. Six weeks later, the patient ends up in the emergency room.</div>
+          </div>
+        </div>
+        <div class="detail-block">
+          <h4>Failure Chain — Perspective 2: The Athlete</h4>
+          <div class="chain-step">
+            <div class="step-dot">1</div>
+            <div class="step-text"><strong>Elite athlete uses wearable for performance and health monitoring.</strong> Data feeds team health management system. Clearance decisions based on biometric thresholds.</div>
+            <div class="step-plain">A college or professional athlete wears a health tracker. Their coach and team doctor use the data to decide if they're healthy enough to play.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">2</div>
+            <div class="step-text"><strong>Wearable data spoofed to show false fitness.</strong> Heart rate variability artificially elevated. Recovery metrics falsified. System clears athlete for full competition.</div>
+            <div class="step-plain">The wearable data is manipulated to make it look like the athlete is fully recovered. The system automatically clears them to compete — even though they're not ready.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">3</div>
+            <div class="step-text"><strong>Athlete competes while physiologically compromised.</strong> Underlying cardiac stress undetected. Performance system sees no red flags. No human override occurs.</div>
+            <div class="step-plain">The athlete plays while their body isn't ready. No alarm goes off. No one stops them. The technology said they were fine.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">4</div>
+            <div class="step-text"><strong>Cardiac event during competition.</strong> Sudden cardiac arrest during high-intensity performance. Spoofed data masked the warning signs that should have kept this athlete off the field.</div>
+            <div class="step-plain">The athlete collapses during the game. The data that should have protected them was manipulated. Technology that was supposed to save lives contributed to the harm.</div>
+          </div>
+        </div>
+      </div>
+      <div class="fw-box pro-only" style="margin-bottom:1.5rem;">
+        <h4>Framework Gaps</h4>
+        <div class="fw-tags">
+          <span class="fw-tag">FDA Digital Health Policy (Consumer Wearables)</span>
+          <span class="fw-tag">NIST AI RMF MAP 3.5</span>
+          <span class="fw-tag">HIPAA §164.312 (Transmission Security)</span>
+          <span class="fw-tag">No Wearable Data Integrity Standard</span>
+          <span class="fw-tag">HealthKit API Security Gap</span>
+          <span class="fw-tag">Sports Medicine Technology Gap</span>
+          <span class="fw-tag">Consumer Device → Clinical Use Boundary Gap</span>
+        </div>
+      </div>
+      <div class="what-should-exist">
+        <h4>What Should Exist</h4>
+        <p class="pro-only">Data integrity verification at every point in the wearable-to-EHR pipeline — not just transmission encryption, but authenticity verification of the data itself. Clear regulatory boundaries on when consumer wearable data can be used for clinical decision-making. Anomaly detection that compares wearable data against in-person vitals to flag statistical improbability. Sports medicine protocols that require human clinical confirmation before automated clearance decisions. The gap between consumer wellness device and clinical medical device is where attackers live — and no current framework addresses it adequately.</p>
+        <p class="student-only">Any data used to make medical decisions needs to be verified as real — not just transmitted securely, but confirmed as authentic. A doctor or athletic trainer should never rely solely on wearable data without a human check. Consumer devices like Apple Watches are not regulated as medical devices — but they're increasingly used to make medical decisions. That gap needs to be closed. This is a career opportunity for the next generation of health technology professionals.</p>
+      </div>
+    </div>
   </div>
 
+  <!-- S6 COMING SOON -->
   <div class="scenario-card coming-soon">
     <div class="scenario-num">06 / SCENARIO</div>
     <div class="scenario-header">
@@ -1485,14 +1558,145 @@ body.student-mode .footer-brand span { color: #1a7fc1; }
     <div class="cs-badge">In Development</div>
   </div>
 
-  <div class="scenario-card coming-soon">
+  <!-- S7 FULL BUILD -->
+  <div class="scenario-card" onclick="toggleScenario(this)">
     <div class="scenario-num">07 / SCENARIO</div>
     <div class="scenario-header">
       <div class="scenario-title">CPAP Firmware Vulnerability<br>ResMed AirSense 11</div>
       <div class="sev critical">Critical</div>
     </div>
-    <p class="scenario-desc">Connected to the internet. Receives automatic updates. Documented CVEs exist. The patient is also the analyst.</p>
-    <div class="cs-badge">In Development</div>
+    <p class="scenario-desc">Connected to the internet. Receives automatic firmware updates via the myAir remote monitoring platform. Documented CVEs exist on this exact device. The patient depending on it is also the analyst who built this lab.</p>
+    <p class="student-desc">A CPAP machine that helps someone breathe at night connects to the internet to send sleep data to doctors. But that same connection can also receive software updates — and if an attacker gets into that channel, they could change how the device works while the patient is asleep.</p>
+    <div class="scenario-detail">
+      <div class="device-explainer">
+        <h4>😴 About This Device</h4>
+        <p>The <strong>ResMed AirSense 11 AutoSet</strong> is a CPAP machine that connects to ResMed's myAir cloud platform via cellular or WiFi. It transmits nightly sleep therapy data and can receive remote configuration changes from clinicians. It also receives automatic firmware updates. This scenario is built from the actual device used by the person who created this lab — and from documented vulnerability research on the ResMed connected device ecosystem.</p>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-block">
+          <h4>Failure Chain</h4>
+          <div class="chain-step">
+            <div class="step-dot">1</div>
+            <div class="step-text"><strong>Device connected to myAir cloud platform.</strong> Cellular modem embedded in device. Remote monitoring active. Automatic firmware update channel open.</div>
+            <div class="step-plain">The CPAP connects to the internet every night to send sleep data. That same connection can receive updates — like a phone getting a software update while you sleep.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">2</div>
+            <div class="step-text"><strong>Firmware update channel lacks robust authentication.</strong> Documented CVEs on ResMed connected device ecosystem. Update accepted without patient notification or consent.</div>
+            <div class="step-plain">Researchers have found security weaknesses in how ResMed devices accept updates. An attacker who exploits this could push a fake update — and the device would accept it silently.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">3</div>
+            <div class="step-text"><strong>Malicious firmware pushed during sleep window.</strong> Patient asleep. No awareness. Device behavior altered silently — pressure settings, therapy modes, or alarm thresholds.</div>
+            <div class="step-plain">The attack happens at 2am while the patient is asleep. The device quietly changes how it works. No alarm. No notification. The patient has no idea.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">4</div>
+            <div class="step-text"><strong>Therapy degraded without clinical detection.</strong> myAir data still transmits. Clinician sees normal-looking data. Patient experiences poor sleep, oxygen desaturation, or untreated apnea events.</div>
+            <div class="step-plain">The sleep data being sent to the doctor looks normal — but the therapy the patient is actually receiving has changed. The doctor has no idea anything is wrong.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">5</div>
+            <div class="step-text"><strong>PAH patient with compromised nightly therapy.</strong> For a pulmonary hypertension patient, degraded CPAP therapy during sleep directly impacts cardiovascular strain, oxygen saturation, and daytime function.</div>
+            <div class="step-plain">For someone with a serious lung condition like pulmonary hypertension, even one night of wrong therapy can cause real health consequences the next day — and over time, the damage adds up.</div>
+          </div>
+        </div>
+        <div class="detail-block">
+          <div class="fw-box pro-only">
+            <h4>Framework Gaps</h4>
+            <div class="fw-tags">
+              <span class="fw-tag">FDA Cybersecurity Guidance 2023</span>
+              <span class="fw-tag">IEC 62443-4-2 CR 3.4</span>
+              <span class="fw-tag">NIST 800-53 SI-7 (Software Integrity)</span>
+              <span class="fw-tag">NIST 800-53 SA-10 (Developer Config Mgmt)</span>
+              <span class="fw-tag">HIPAA §164.312(a)(2)(iv)</span>
+              <span class="fw-tag">No Patient Consent Standard for Remote Updates</span>
+              <span class="fw-tag">Home Device Monitoring Gap</span>
+            </div>
+          </div>
+          <div class="student-only" style="background:#0a1628; border:1px solid #1a3a5c; padding:1.25rem; margin-top:1rem;">
+            <h4 style="font-family:var(--mono); font-size:0.6rem; letter-spacing:0.15em; color:#1a7fc1; text-transform:uppercase; margin-bottom:0.75rem;">The Personal Connection</h4>
+            <p style="font-size:0.88rem; color:#7aa8cc; line-height:1.7;">The person who built this lab uses a ResMed AirSense 11 every night. She also has a condition called pulmonary hypertension that makes breathing more difficult. This scenario isn't theoretical — it's personal. That's what makes healthcare cybersecurity different from any other type of security work.</p>
+          </div>
+        </div>
+      </div>
+      <div class="what-should-exist">
+        <h4>What Should Exist</h4>
+        <p class="pro-only">Mandatory patient notification and consent before any remote firmware update on a home medical device. Cryptographic code signing with independent verification before update acceptance. Anomaly detection on therapy parameter changes post-update. FDA-mandated Software Bill of Materials (SBOM) for all connected home medical devices. Patient-accessible audit log of all remote device interactions. These protections do not currently exist as enforceable standards for home CPAP devices.</p>
+        <p class="student-only">Before any medical device gets a software update while a patient is using it, the patient should be notified and should agree to the update — just like how your phone asks you before installing updates. The update should be verified as coming from the real manufacturer. And any changes to how the device works should be flagged to the patient's doctor immediately.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 FULL BUILD -->
+  <div class="scenario-card" onclick="toggleScenario(this)">
+    <div class="scenario-num">08 / SCENARIO</div>
+    <div class="scenario-header">
+      <div class="scenario-title">Dementia Home Health<br>Technology Failure Chain</div>
+      <div class="sev critical">Critical</div>
+    </div>
+    <p class="scenario-desc">A cognitively impaired patient living at home relies on a connected ecosystem of smart sensors, GPS tracking, automated medication dispensers, and telehealth platforms. Each device is a lifeline. Each connection is a potential failure point. The patient cannot self-advocate when the system fails.</p>
+    <p class="student-desc">As health technology improves, more people with memory conditions like Alzheimer's and dementia can live at home longer — with the help of connected devices. But what happens when those devices fail, get hacked, or just stop working? The patient often can't tell anyone something is wrong.</p>
+    <div class="scenario-detail">
+      <div class="device-explainer">
+        <h4>🧠 The Connected Dementia Care Ecosystem</h4>
+        <p>According to the 2025 WHO report on dementia and digital health, AI-powered diagnostic tools, smart home monitoring sensors, GPS tracking devices, telehealth platforms, cognitive aid applications, automated medication dispensers, and robotic companion devices are now core components of modern dementia home care. These technologies reduce caregiver burnout, lower emergency visits, and allow patients to live safely at home longer. They are also almost entirely unsecured from a cybersecurity standpoint.</p>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-block">
+          <h4>Failure Chain</h4>
+          <div class="chain-step">
+            <div class="step-dot">1</div>
+            <div class="step-text"><strong>Ecosystem dependency established.</strong> Smart home sensors monitor movement and activity. GPS tracker provides location. Automated dispenser manages medications. Telehealth platform connects to specialists remotely. All connected. All networked. None secured.</div>
+            <div class="step-plain">The patient's whole safety system runs on connected devices. Smart sensors detect if they've fallen. GPS shows where they are. A machine gives them their medications at the right time. A tablet connects them to their doctor. All of it runs on WiFi.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">2</div>
+            <div class="step-text"><strong>Single network compromise cascades across all devices.</strong> Home router exploited. Attacker gains access to entire connected care ecosystem. Sensor data manipulated. Medication dispenser schedule altered. GPS location data spoofed.</div>
+            <div class="step-plain">If a hacker gets into the home WiFi network, they can reach every device at once. They could make the sensors say the patient is fine when they're not. They could change the medication schedule. They could make the GPS show the wrong location.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">3</div>
+            <div class="step-text"><strong>Patient cannot self-report the failure.</strong> Short-term memory impairment means the patient cannot recognize, remember, or communicate that devices are behaving abnormally. No self-advocacy. No internal alarm system.</div>
+            <div class="step-plain">Unlike most patients, someone with dementia may not realize something is wrong — or may forget to tell someone even if they do notice. They can't be their own backup system.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">4</div>
+            <div class="step-text"><strong>Remote caregiver receives false normal data.</strong> Family member or remote care coordinator sees clean dashboards. No alerts. No anomalies. No reason to intervene. Patient is in danger with no visible signal.</div>
+            <div class="step-plain">The family members checking in remotely see everything looks fine — because the devices are showing false data. They have no reason to worry. But the patient may be in danger.</div>
+          </div>
+          <div class="chain-step">
+            <div class="step-dot">5</div>
+            <div class="step-text"><strong>Delayed detection. Preventable harm.</strong> Fall not detected. Medication missed or doubled. Wandering event not caught. Telehealth appointment missed. Every failure compounds. Every hour of delay increases risk of irreversible harm.</div>
+            <div class="step-plain">By the time someone realizes something is wrong, it may have been hours. A fall that wasn't detected. A medication that wasn't given — or was given twice. A patient who wandered and whose GPS said they were home.</div>
+          </div>
+        </div>
+        <div class="detail-block">
+          <div class="fw-box pro-only">
+            <h4>Framework Gaps</h4>
+            <div class="fw-tags">
+              <span class="fw-tag">FDA Digital Health Policy (Home Devices)</span>
+              <span class="fw-tag">NIST 800-53 SC-3 (Security Function Isolation)</span>
+              <span class="fw-tag">HIPAA §164.308 (Admin Safeguards)</span>
+              <span class="fw-tag">NIST AI RMF GOVERN 6.1</span>
+              <span class="fw-tag">No Home IoMT Security Standard</span>
+              <span class="fw-tag">Caregiver Alert Integrity Gap</span>
+              <span class="fw-tag">WHO 2025 Digital Dementia Care Gap</span>
+              <span class="fw-tag">Vulnerable Population Protection Gap</span>
+            </div>
+          </div>
+          <div class="student-only" style="background:#0a1628; border:1px solid #1a3a5c; padding:1.25rem; margin-top:1rem;">
+            <h4 style="font-family:var(--mono); font-size:0.6rem; letter-spacing:0.15em; color:#1a7fc1; text-transform:uppercase; margin-bottom:0.75rem;">Why This Matters</h4>
+            <p style="font-size:0.88rem; color:#7aa8cc; line-height:1.7;">According to the WHO, over 55 million people worldwide live with dementia. As health technology allows more of them to live at home independently, the security of those technologies becomes a matter of life and safety. This is one of the most important unsolved problems in healthcare cybersecurity today — and almost nobody is working on it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="what-should-exist">
+        <h4>What Should Exist</h4>
+        <p class="pro-only">A dedicated security framework for connected home care ecosystems serving cognitively impaired patients — distinct from hospital IoMT frameworks because the patient cannot self-advocate. Mandatory network segmentation between home care devices and general household WiFi. Caregiver alert integrity verification — dashboards must confirm data authenticity, not just data presence. AI anomaly detection trained specifically on dementia patient behavioral patterns. Regulatory classification of dementia home care technology ecosystems as life-critical infrastructure. The 2025 WHO report on digital dementia care identified telehealth and connected monitoring as transformative — but makes no mention of cybersecurity. That gap is the problem.</p>
+        <p class="student-only">Home care devices for people with dementia need their own security rules — separate from hospital rules — because the patient can't tell anyone when something goes wrong. Family members and remote caregivers need to know when device data might not be trustworthy. And the companies building these devices need to design security in from the beginning, not add it later. Right now, very few people are working on this problem. That could be you.</p>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1526,6 +1730,9 @@ body.student-mode .footer-brand span { color: #1a7fc1; }
         <button class="scene-btn active" onclick="loadDecision(0,this)">01 — Battery Failure</button>
         <button class="scene-btn" onclick="loadDecision(1,this)">02 — AI Triage</button>
         <button class="scene-btn" onclick="loadDecision(2,this)">03 — Infusion Pump</button>
+        <button class="scene-btn" onclick="loadDecision(3,this)">05 — Wearable Spoofing</button>
+        <button class="scene-btn" onclick="loadDecision(4,this)">07 — CPAP Firmware</button>
+        <button class="scene-btn" onclick="loadDecision(5,this)">08 — Dementia Home Health</button>
       </div>
       <div class="decision-body">
         <div class="situation" id="situation"></div>
@@ -1714,7 +1921,7 @@ body.student-mode .footer-brand span { color: #1a7fc1; }
     <div class="about-grid">
       <div class="about-left">
         <h2>Built from<br><span>Lived</span><br>Reality.</h2>
-        <p class="body-text">This lab was created by Chaunda C. Dallas — healthcare cybersecurity consultant, IoMT risk specialist, and clinical emergency medicine professional with 28+ years of direct patient care across ER, interventional radiology, hyperbarics, and pediatric care.</p>
+        <p class="body-text">This lab was created by Chaunda C. Dallas, MSIT — healthcare cybersecurity consultant, IoMT risk specialist, and clinical emergency medicine professional with 28+ years of direct patient care across ER, interventional radiology, hyperbarics, and pediatric care.</p>
         <p class="body-text">The scenarios here are not theoretical. They are built from the intersection of clinical expertise and daily device dependency — managing pulmonary hypertension on a portable oxygen concentrator, with a CPAP connected to the internet, and no insurance safety net.</p>
         <p class="body-text pro-only">Featured Defender in the Semperis documentary <em>'Midnight in the War Room'</em> — premiering at Black Hat USA 2026.</p>
         <p class="body-text student-only">Ms. Chaunda teaches health technology to middle school students, mentors 200+ women in cybersecurity through WiCyS, and will be featured in a documentary about hospital ransomware attacks at Black Hat USA 2026 — one of the biggest cybersecurity conferences in the world.</p>
@@ -1936,13 +2143,35 @@ render();
 
 // ── RANSOMWARE TRACKER ──
 const incidents = [
+  // 2026
+  { org: "University of Mississippi Medical Center (UMMC)", date: "Feb 2026", vector: "Ransomware — 9-day attack starting Feb 19", impact: "35 clinics closed statewide. Patient care severely disrupted across Mississippi.", recovery: "9+ days", gaps: ["NIST 800-61 IR Plan","HHS 405(d) CPGs","Backup & Recovery"], severity: "critical", type: "ransomware" },
+  { org: "Conduent Business Services LLC", date: "2026", vector: "Business associate breach", impact: "25M+ individuals affected. One of the largest BA breaches on record.", recovery: "TBC", gaps: ["Third-Party Risk","HIPAA BA Agreement","NIST 800-53 SA-9"], severity: "critical", type: "ransomware" },
+  { org: "Aflac", date: "2026", vector: "Health plan breach", impact: "13,924,906 individuals affected. Health plan member data exposed.", recovery: "TBC", gaps: ["HIPAA §164.312","Data Encryption","Third-Party Risk"], severity: "critical", type: "ransomware" },
+  { org: "Yale New Haven Health System", date: "2026", vector: "Healthcare provider breach", impact: "5,556,702 individuals affected. Patient data compromised.", recovery: "TBC", gaps: ["Network Segmentation","HIPAA Breach Notification","IR Playbook"], severity: "critical", type: "ransomware" },
+  { org: "Episource LLC", date: "2026", vector: "Business associate breach", impact: "5,418,866 individuals affected.", recovery: "TBC", gaps: ["Third-Party Risk","HIPAA BA Agreement","NIST 800-53 SA-9"], severity: "critical", type: "ransomware" },
+  { org: "Blue Shield of California", date: "2026", vector: "Business associate breach", impact: "4,700,000 members affected.", recovery: "TBC", gaps: ["Third-Party Risk","Data Classification","HIPAA §164.308"], severity: "critical", type: "ransomware" },
+  { org: "DaVita Inc.", date: "2026", vector: "Healthcare provider breach", impact: "2,689,826 patients affected. Dialysis patient data exposed.", recovery: "TBC", gaps: ["Network Segmentation","HIPAA §164.312","IR Plan"], severity: "critical", type: "ransomware" },
+  { org: "Oracle Health (Cerner)", date: "2026", vector: "Business associate — EHR platform", impact: "Unknown number affected. EHR infrastructure compromise — widespread downstream impact.", recovery: "TBC", gaps: ["Third-Party Risk","Supply Chain Security","NIST 800-53 SA-12"], severity: "critical", type: "ransomware" },
+  { org: "Anne Arundel Dermatology", date: "2026", vector: "Healthcare provider breach", impact: "1,905,000 patients affected.", recovery: "TBC", gaps: ["Data Encryption","HIPAA Breach Notification","IR Playbook"], severity: "high", type: "ransomware" },
+  { org: "Radiology Associates of Richmond", date: "2026", vector: "Healthcare provider breach", impact: "1,419,091 patients affected.", recovery: "TBC", gaps: ["HIPAA §164.312","Network Segmentation","Backup Integrity"], severity: "high", type: "ransomware" },
+  { org: "Southeast Series of Lockton Companies", date: "2026", vector: "Business associate breach — GA", impact: "1,124,727 individuals affected.", recovery: "TBC", gaps: ["Third-Party Risk","HIPAA BA Agreement"], severity: "high", type: "ransomware" },
+  { org: "Community Health Center Inc.", date: "2026", vector: "Healthcare provider breach — CT", impact: "1,060,936 patients affected.", recovery: "TBC", gaps: ["IR Plan","HIPAA §164.308","Network Segmentation"], severity: "high", type: "ransomware" },
+  { org: "Frederick Health", date: "2026", vector: "Healthcare provider breach — MD", impact: "934,326 patients affected.", recovery: "TBC", gaps: ["Backup & Recovery","HIPAA Breach Notification","IR Playbook"], severity: "high", type: "ransomware" },
+  { org: "McLaren Health Care", date: "2026", vector: "Healthcare provider breach — MI", impact: "743,131 patients affected.", recovery: "TBC", gaps: ["Network Segmentation","NIST 800-61","HIPAA §164.312"], severity: "high", type: "ransomware" },
+  { org: "Medusind Inc.", date: "2026", vector: "Business associate breach — FL", impact: "701,475 individuals affected.", recovery: "TBC", gaps: ["Third-Party Risk","HIPAA BA Agreement","Data Encryption"], severity: "high", type: "ransomware" },
+  { org: "Kelly & Associates Insurance Group", date: "2026", vector: "Business associate breach — MD", impact: "553,332 individuals affected.", recovery: "TBC", gaps: ["Third-Party Risk","HIPAA §164.308","IR Plan"], severity: "high", type: "ransomware" },
+  { org: "United Seating and Mobility (Numotion)", date: "2026", vector: "Healthcare provider breach — TN", impact: "529,004 patients affected. DME provider data exposed.", recovery: "TBC", gaps: ["Data Encryption","HIPAA Breach Notification","Network Segmentation"], severity: "high", type: "ransomware" },
+  // 2024–2025
   { org: "Ascension Health", date: "May 2024", vector: "Phishing → ransomware lateral movement", impact: "EHR offline. Staff reverted to paper. Patient diversions across 140 hospitals.", recovery: "Weeks", gaps: ["NIST 800-61 IR Plan","Network Segmentation","HHS 405(d) CPGs"], severity: "critical", type: "ransomware" },
-  { org: "Change Healthcare (UnitedHealth)", date: "Feb 2024", vector: "Compromised credentials, no MFA on Citrix", impact: "Largest US healthcare breach. $872M+ losses. Pharmacy disruptions nationwide.", recovery: "Months", gaps: ["MFA Requirement","HIPAA §164.312","Third-Party Risk"], severity: "critical", type: "ransomware" },
+  { org: "Change Healthcare (UnitedHealth)", date: "Feb 2024", vector: "Compromised credentials, no MFA on Citrix", impact: "Largest US healthcare breach at time. $872M+ losses. Pharmacy disruptions nationwide.", recovery: "Months", gaps: ["MFA Requirement","HIPAA §164.312","Third-Party Risk"], severity: "critical", type: "ransomware" },
+  { org: "City of Hope", date: "2024", vector: "Network intrusion — cancer center", impact: "800K+ patients affected. Sensitive oncology patient data exposed.", recovery: "Weeks", gaps: ["Network Segmentation","Data Encryption","HIPAA §164.312"], severity: "critical", type: "ransomware" },
+  { org: "Kaiser Foundation Health Plan", date: "2024", vector: "Unauthorized data transmission to third parties", impact: "13.4M members affected. Largest healthcare breach of 2024.", recovery: "TBC", gaps: ["Third-Party Risk","Data Classification","HIPAA §164.308"], severity: "critical", type: "ransomware" },
+  { org: "Stryker MDM (alleged)", date: "2024", vector: "Handala / Void Manticore — MOIS-linked threat actor", impact: "Medical device management system targeted. Device integrity risk.", recovery: "Investigating", gaps: ["IoMT Inventory","FDA Cyber Guidance 2023","Supply Chain Risk"], severity: "high", type: "iomt" },
   { org: "Ardent Health Services", date: "Nov 2023", vector: "Ransomware — entry vector undisclosed", impact: "30 hospitals. ERs diverted. Surgeries postponed. Network fully offline.", recovery: "Weeks", gaps: ["IR Plan","Backup Integrity","NIST CSF RS.RP"], severity: "critical", type: "ransomware" },
+  { org: "Azura Vascular Care", date: "2023", vector: "Network breach — outpatient vascular centers", impact: "Patient data compromised across multiple outpatient care locations.", recovery: "TBC", gaps: ["Network Segmentation","HIPAA §164.312","Third-Party Risk"], severity: "high", type: "ransomware" },
   { org: "CommonSpirit Health", date: "Oct 2022", vector: "Ransomware — phishing suspected", impact: "140+ hospitals. EHR outages. Patient record access lost. Care delays.", recovery: "Weeks", gaps: ["Backup & Recovery","NIST 800-53 CP-9","Segmentation"], severity: "critical", type: "ransomware" },
   { org: "Scripps Health", date: "May 2021", vector: "Ransomware — phishing", impact: "Portal offline 4 weeks. 147K records exposed. Ambulance diversions.", recovery: "4 weeks", gaps: ["Data Encryption","HIPAA Breach Notification","IR Playbook"], severity: "high", type: "ransomware" },
-  { org: "Stryker MDM (alleged)", date: "2024", vector: "Handala / Void Manticore — MOIS-linked", impact: "Medical device management system targeted. Device integrity risk.", recovery: "Investigating", gaps: ["IoMT Inventory","FDA Cyber Guidance 2023","Supply Chain Risk"], severity: "high", type: "iomt" },
-  { org: "FDA MedWatch Device Alerts", date: "Ongoing", vector: "Firmware, network, supply chain — multiple", impact: "Infusion pumps, insulin pumps, monitors flagged for cybersecurity vulnerabilities.", recovery: "Patch-dependent", gaps: ["IEC 62443-4-2","NIST 800-82 Rev 3","MDS² Docs"], severity: "high", type: "iomt" }
+  { org: "FDA MedWatch Device Alerts", date: "Ongoing", vector: "Firmware, network, supply chain — multiple", impact: "Infusion pumps, insulin pumps, and monitors flagged for cybersecurity vulnerabilities.", recovery: "Patch-dependent", gaps: ["IEC 62443-4-2","NIST 800-82 Rev 3","MDS² Docs"], severity: "high", type: "iomt" }
 ];
 
 let activeFilter = 'all';

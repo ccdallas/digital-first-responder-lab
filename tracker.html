@@ -1,898 +1,256 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Healthcare Ransomware Intelligence Tracker — DFR Lab</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --crimson: #C8102E;
-    --crimson-dim: rgba(200,16,46,0.10);
-    --crimson-glow: rgba(200,16,46,0.05);
-    --steel: #1a1f2e;
-    --deep: #1e2436;
-    --surface: #242936;
-    --surface-raised: #2a3040;
-    --white: #f5f3ef;
-    --white-dim: rgba(245,243,239,0.65);
-    --white-faint: rgba(245,243,239,0.12);
-    --gold: #c9a84c;
-    --gold-dim: rgba(201,168,76,0.14);
-    --green: #4caf6e;
-    --green-dim: rgba(76,175,110,0.12);
-    --orange: #e07b39;
-    --orange-dim: rgba(224,123,57,0.12);
-    --border: rgba(245,243,239,0.09);
-    --border-accent: rgba(200,16,46,0.25);
-    --border-gold: rgba(201,168,76,0.2);
-  }
+:root{
+  --bg:#161B21; --surface:#1E242B; --surface-2:#232B34;
+  --text:#F4F4F1; --dim:#95A0AB;
+  --emerald:#15B68C; --crimson:#E8484E; --brass:#C9A84C;
+  --border:rgba(255,255,255,0.09);
+  --max:1100px;
+}
+[data-theme="light"]{
+  --bg:#F4F4F1; --surface:#FFFFFF; --surface-2:#ECEDE8;
+  --text:#1C2127; --dim:#5A6670;
+  --emerald:#006B4F; --crimson:#C2262E; --brass:#A8842F;
+  --border:rgba(0,0,0,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px 90px}
+.mono{font-family:'DM Mono',monospace}
+::selection{background:var(--emerald);color:var(--bg)}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+.bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.bar-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px}
+.brand{display:flex;align-items:baseline;gap:9px;font-family:'Bebas Neue',sans-serif;letter-spacing:.06em;font-size:22px;line-height:1}
+.brand .pulse{width:7px;height:7px;border-radius:50%;background:var(--crimson);display:inline-block;animation:pulse 2s infinite}
+.brand .sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.barnav{display:flex;align-items:center;gap:16px}
+.barnav a{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.1em;color:var(--dim);text-decoration:none;text-transform:uppercase}
+.barnav a:hover{color:var(--emerald)}
+.toggle{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.1em;cursor:pointer;text-transform:uppercase}
+.toggle:hover{border-color:var(--emerald)}
+.toggle .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  body {
-    background: var(--steel);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-  }
+.ecg{width:100%;height:30px;display:block;margin-top:8px}
+.ecg .base{fill:none;stroke:var(--emerald);stroke-width:2;stroke-linecap:round}
+.ecg .spike{fill:none;stroke:var(--crimson);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 10% 10%, rgba(200,16,46,0.06) 0%, transparent 55%),
-      radial-gradient(ellipse 40% 50% at 90% 90%, rgba(201,168,76,0.03) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
+.header{padding:46px 0 30px;border-bottom:1px solid var(--border);margin-bottom:30px}
+.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--emerald);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.02;letter-spacing:.02em;margin-bottom:12px}
+h1 .accent{color:var(--crimson)}
+.sub{font-size:14px;font-weight:300;color:var(--dim);line-height:1.7;max-width:640px}
 
-  .ecg-bar {
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--crimson) 20%, var(--crimson) 22%, transparent 24%, transparent 26%, var(--crimson) 28%, var(--crimson) 72%, transparent 74%, transparent 76%, var(--crimson) 78%, var(--crimson) 80%, transparent);
-    opacity: 0.6;
-  }
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:26px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 17px}
+.stat .l{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.stat .v{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;letter-spacing:.02em}
+.stat .v.crimson{color:var(--crimson)}
+.stat .v.emerald{color:var(--emerald)}
+.stat .v.brass{color:var(--brass)}
+.stat .s{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:3px}
 
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 28px 100px;
-  }
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0 12px;height:38px}
+.search input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px}
+.search input::placeholder{color:var(--dim)}
+.search .ic{color:var(--dim);font-family:'DM Mono',monospace;font-size:12px}
+select.sort{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;height:38px;padding:0 12px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;cursor:pointer}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.fbtn{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:6px 13px;border:1px solid var(--border);background:var(--surface);color:var(--dim);cursor:pointer;border-radius:6px;transition:all .18s}
+.fbtn:hover,.fbtn.active{border-color:var(--crimson);color:var(--text);background:color-mix(in srgb,var(--crimson) 12%,transparent)}
+.summary{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--dim);margin-bottom:20px}
+.summary b{color:var(--crimson);font-weight:500}
 
-  /* HEADER */
-  .header {
-    padding: 52px 0 40px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 36px;
-  }
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.icard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:flex;flex-direction:column;gap:11px;transition:border-color .2s}
+.icard:hover{border-color:color-mix(in srgb,var(--crimson) 45%,var(--border))}
+.icard.critical{border-left:3px solid var(--crimson)}
+.icard.high{border-left:3px solid var(--brass)}
+.ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.org{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;line-height:1.25}
+.badge{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;padding:3px 9px;border-radius:5px;flex-shrink:0}
+.badge.critical{background:color-mix(in srgb,var(--crimson) 14%,transparent);color:var(--crimson);border:1px solid color-mix(in srgb,var(--crimson) 40%,transparent)}
+.badge.high{background:color-mix(in srgb,var(--brass) 14%,transparent);color:var(--brass);border:1px solid color-mix(in srgb,var(--brass) 40%,transparent)}
+.cmeta{display:flex;flex-wrap:wrap;gap:6px}
+.mtag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;padding:3px 8px;border:1px solid var(--border);color:var(--dim);border-radius:5px;background:var(--surface-2)}
+.mtag.threat{color:var(--crimson);border-color:color-mix(in srgb,var(--crimson) 30%,transparent);cursor:pointer}
+.mtag.threat:hover{background:color-mix(in srgb,var(--crimson) 12%,transparent)}
+.recs{display:flex;align-items:baseline;gap:7px}
+.recs .n{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;color:var(--crimson);letter-spacing:.02em}
+.recs .l{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.impact{font-size:12.5px;font-weight:300;color:var(--dim);line-height:1.7;border-left:1px solid var(--border);padding-left:12px}
+.gaps{display:flex;flex-wrap:wrap;gap:5px}
+.gap{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.04em;padding:2px 8px;border:1px solid color-mix(in srgb,var(--brass) 28%,transparent);color:var(--brass);border-radius:5px;background:color-mix(in srgb,var(--brass) 10%,transparent)}
+.csrc{margin-top:2px}
+.csrc a{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--emerald);text-decoration:none}
+.csrc a:hover{text-decoration:underline}
+.csrc .vf{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-left:8px}
+.empty{grid-column:1/-1;text-align:center;padding:46px;font-family:'DM Mono',monospace;font-size:12px;color:var(--dim)}
 
-  .eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--crimson);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+.trends{margin-top:38px;border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:26px 30px}
+.trends h2{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:24px;letter-spacing:.03em;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.titem .th{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin-bottom:7px}
+.titem p{font-size:13px;font-weight:300;color:var(--dim);line-height:1.7}
+.titem p strong{color:var(--text);font-weight:500}
+.srcnote{margin-top:26px;padding-top:18px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.04em;color:var(--dim);line-height:1.7}
 
-  .live-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--crimson);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .header h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 300;
-    line-height: 1.15;
-    color: var(--white);
-    margin-bottom: 10px;
-  }
-
-  .header h1 .accent { color: var(--crimson); font-style: italic; }
-
-  .header-sub {
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--white-dim);
-    line-height: 1.7;
-    max-width: 620px;
-    margin-top: 8px;
-  }
-
-  /* STATS BAR */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 2px;
-    margin-bottom: 28px;
-  }
-
-  .stat-card {
-    background: var(--deep);
-    border: 1px solid var(--border);
-    padding: 18px 20px;
-  }
-
-  .stat-card:first-child { border-radius: 2px 0 0 2px; }
-  .stat-card:last-child  { border-radius: 0 2px 2px 0; }
-
-  .stat-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    opacity: 0.5;
-    margin-bottom: 6px;
-  }
-
-  .stat-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--white);
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-
-  .stat-value.red { color: #e85070; }
-  .stat-value.gold { color: var(--gold); }
-  .stat-value.green { color: var(--green); }
-
-  .stat-sub {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: var(--white-dim);
-    opacity: 0.45;
-    letter-spacing: 0.05em;
-  }
-
-  /* FILTER BAR */
-  .filter-bar {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-    align-items: center;
-  }
-
-  .filter-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    opacity: 0.45;
-    margin-right: 4px;
-  }
-
-  .filter-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--white-dim);
-    cursor: pointer;
-    border-radius: 1px;
-    transition: all 0.2s ease;
-  }
-
-  .filter-btn:hover,
-  .filter-btn.active {
-    border-color: var(--crimson);
-    color: var(--white);
-    background: var(--crimson-dim);
-  }
-
-  /* INCIDENT GRID */
-  .incident-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 2px;
-  }
-
-  /* INCIDENT CARD */
-  .incident-card {
-    background: var(--deep);
-    border: 1px solid var(--border);
-    padding: 24px 26px;
-    position: relative;
-    transition: border-color 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .incident-card:hover { border-color: var(--border-accent); }
-
-  .incident-card.critical { border-left: 2px solid var(--crimson); }
-  .incident-card.high     { border-left: 2px solid var(--orange); }
-  .incident-card.medium   { border-left: 2px solid var(--gold); }
-
-  /* CARD TOP */
-  .card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .org-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--white);
-    line-height: 1.2;
-    flex: 1;
-  }
-
-  .severity-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 1px;
-    flex-shrink: 0;
-  }
-
-  .severity-badge.critical {
-    background: var(--crimson-dim);
-    color: #e85070;
-    border: 1px solid var(--border-accent);
-  }
-
-  .severity-badge.high {
-    background: var(--orange-dim);
-    color: var(--orange);
-    border: 1px solid rgba(224,123,57,0.3);
-  }
-
-  .severity-badge.medium {
-    background: var(--gold-dim);
-    color: var(--gold);
-    border: 1px solid var(--border-gold);
-  }
-
-  /* CARD META */
-  .card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .meta-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    padding: 3px 9px;
-    border: 1px solid var(--border);
-    color: var(--white-dim);
-    border-radius: 1px;
-    background: var(--surface);
-  }
-
-  .meta-tag.threat {
-    border-color: rgba(200,16,46,0.2);
-    color: #e85070;
-    background: var(--crimson-glow);
-  }
-
-  .meta-tag.date {
-    color: var(--white-dim);
-    opacity: 0.7;
-  }
-
-  /* RECORDS BREACHED */
-  .records-row {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-  }
-
-  .records-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--crimson);
-    line-height: 1;
-  }
-
-  .records-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    opacity: 0.5;
-  }
-
-  /* IMPACT */
-  .impact-text {
-    font-size: 12.5px;
-    font-weight: 300;
-    color: var(--white-dim);
-    line-height: 1.75;
-    border-left: 1px solid var(--border);
-    padding-left: 12px;
-  }
-
-  /* FRAMEWORK GAPS */
-  .gap-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .gap-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 0.05em;
-    padding: 2px 8px;
-    border: 1px solid rgba(201,168,76,0.15);
-    color: var(--gold);
-    border-radius: 1px;
-    opacity: 0.7;
-    background: var(--gold-dim);
-  }
-
-  /* SECTOR TAG */
-  .sector-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 8.5px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 1px;
-    background: var(--green-dim);
-    color: var(--green);
-    border: 1px solid rgba(76,175,110,0.2);
-    display: inline-block;
-    margin-bottom: 2px;
-  }
-
-  /* TREND SECTION */
-  .trends {
-    margin-top: 40px;
-    border: 1px solid var(--border);
-    background: var(--deep);
-    padding: 28px 32px;
-  }
-
-  .trends-header {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--white);
-    margin-bottom: 20px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .trends-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-  }
-
-  .trend-item {}
-
-  .trend-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--crimson);
-    margin-bottom: 8px;
-    opacity: 0.8;
-  }
-
-  .trend-text {
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--white-dim);
-    line-height: 1.75;
-  }
-
-  .trend-text strong { color: var(--white); font-weight: 500; }
-
-  /* SOURCE NOTE */
-  .source-note {
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    font-family: 'DM Mono', monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.06em;
-    color: var(--white-dim);
-    opacity: 0.4;
-    line-height: 1.7;
-  }
-
-  /* NO RESULTS */
-  .no-results {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 48px 20px;
-    color: var(--white-dim);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    opacity: 0.4;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.3; transform: scale(0.75); }
-  }
-
-  @media (max-width: 640px) {
-    .container { padding: 0 16px 60px; }
-    .header { padding: 36px 0 28px; }
-    .incident-grid { grid-template-columns: 1fr; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .trends { padding: 20px 18px; }
-  }
+@keyframes none2{}
+@media (prefers-reduced-motion: reduce){.brand .pulse{animation:none}}
+:focus-visible{outline:2px solid var(--emerald);outline-offset:2px;border-radius:4px}
+@media(max-width:640px){.igrid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 
-<div class="ecg-bar"></div>
+<div class="bar">
+  <div class="bar-in">
+    <div class="brand">DFR LAB<span class="pulse" aria-hidden="true"></span><span class="sub">Intel Tracker</span></div>
+    <div class="barnav">
+      <a href="index.html">&larr; Lab home</a>
+      <button class="toggle" id="themeBtn" aria-label="Switch light or dark mode"><span class="dot" aria-hidden="true"></span><span id="themeLbl">Light</span></button>
+    </div>
+  </div>
+</div>
 
-<div class="container">
-
+<div class="wrap">
   <div class="header">
-    <div class="eyebrow">
-      <div class="live-dot"></div>
-      DFR Lab · Healthcare Ransomware Intelligence
-    </div>
+    <div class="eyebrow"><span class="brand"><span class="pulse" aria-hidden="true"></span></span> Healthcare Ransomware Intelligence</div>
     <h1>Healthcare Ransomware<br><span class="accent">Incident Tracker</span></h1>
-    <p class="header-sub">Real incidents. Real patient impact. Real framework gaps. Every entry here represents patients whose care was disrupted — ransomware attacks on healthcare are attacks on human life, not just data. Updated June 2026.</p>
+    <p class="sub">Real incidents. Real patient impact. Real framework gaps. Every entry represents patients whose care was disrupted — ransomware attacks on healthcare are attacks on human life, not just data.</p>
+    <svg class="ecg" viewBox="0 0 1000 30" preserveAspectRatio="none" aria-hidden="true">
+      <polyline class="base" points="0,15 470,15 482,15 490,15"></polyline>
+      <polyline class="spike" points="490,15 498,15 503,4 508,26 513,9 518,15"></polyline>
+      <polyline class="base" points="518,15 1000,15"></polyline>
+    </svg>
   </div>
 
-  <!-- STATS BAR -->
-  <div class="stats-bar">
-    <div class="stat-card">
-      <div class="stat-label">2025 Reported Incidents</div>
-      <div class="stat-value red">460</div>
-      <div class="stat-sub">US HPH sector (FBI/IC3)</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Patient Records Breached</div>
-      <div class="stat-value red">57M+</div>
-      <div class="stat-sub">Across 642 large breaches</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg Breach Cost</div>
-      <div class="stat-value gold">$10.93M</div>
-      <div class="stat-sub">Healthcare #1 most expensive</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Most Active Group</div>
-      <div class="stat-value" style="font-size:20px; padding-top:4px;">Interlock</div>
-      <div class="stat-sub">2.74M records — 2025</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Vendor Attacks Surge</div>
-      <div class="stat-value green">+30%</div>
-      <div class="stat-sub">Healthcare businesses 2025</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Threat Groups Active</div>
-      <div class="stat-value red">88</div>
-      <div class="stat-sub">Targeting healthcare (Sophos)</div>
-    </div>
+  <div class="stats">
+    <div class="stat"><div class="l">Incidents tracked</div><div class="v emerald" id="st-count">0</div><div class="s">In this dataset</div></div>
+    <div class="stat"><div class="l">Individuals impacted</div><div class="v crimson" id="st-records">0</div><div class="s">Sum of disclosed totals</div></div>
+    <div class="stat"><div class="l">Avg breach cost</div><div class="v brass">$10.93M</div><div class="s">Healthcare #1 — IBM 2025</div></div>
+    <div class="stat"><div class="l">Most active group</div><div class="v" style="font-size:22px;padding-top:5px">Interlock</div><div class="s">By records stolen, 2025</div></div>
+    <div class="stat"><div class="l">2026 top threat</div><div class="v emerald" style="font-size:22px;padding-top:5px">AI-enabled</div><div class="s">Surpassed ransomware</div></div>
   </div>
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="filterCards('all', this)">All Incidents</button>
-    <button class="filter-btn" onclick="filterCards('critical', this)">Critical</button>
-    <button class="filter-btn" onclick="filterCards('high', this)">High</button>
-    <button class="filter-btn" onclick="filterCards('hospital', this)">Hospital / Health System</button>
-    <button class="filter-btn" onclick="filterCards('vendor', this)">Vendor / Business</button>
-    <button class="filter-btn" onclick="filterCards('2025', this)">2025</button>
-    <button class="filter-btn" onclick="filterCards('2024', this)">2024</button>
+  <div class="controls">
+    <div class="search"><span class="ic" aria-hidden="true">&#9906;</span><input id="search" type="search" placeholder="Search organization, threat group, vector, or framework gap…" aria-label="Search incidents"></div>
+    <select class="sort" id="sort" aria-label="Sort incidents">
+      <option value="records">Sort: Records (high to low)</option>
+      <option value="date">Sort: Date (newest)</option>
+      <option value="severity">Sort: Severity</option>
+      <option value="org">Sort: Organization (A–Z)</option>
+    </select>
   </div>
 
-  <!-- INCIDENT GRID -->
-  <div class="incident-grid" id="incidentGrid">
-
-    <!-- DAVITA -->
-    <div class="incident-card critical" data-severity="critical" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">DaVita Inc.</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">March–April 2025</span>
-        <span class="meta-tag threat">Interlock</span>
-        <span class="meta-tag">Kidney Dialysis · National</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">2.69M</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Unauthorized access to dialysis labs database. Names, SSNs, health insurance data, dialysis lab results exposed. Billing and revenue collection disrupted across 2,600+ outpatient centers. Interlock posted 1.51 TB of stolen data publicly after attack. Patient care continued but financial operations significantly impacted.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Vendor Network Segmentation</span>
-        <span class="gap-tag">Data Exfiltration Detection</span>
-        <span class="gap-tag">HIPAA §164.312</span>
-      </div>
-    </div>
-
-    <!-- KETTERING HEALTH -->
-    <div class="incident-card critical" data-severity="critical" data-sector="hospital" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Kettering Health</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">April–May 2025</span>
-        <span class="meta-tag threat">Interlock</span>
-        <span class="meta-tag">Health System · Ohio</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">1.69M</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Network first breached April 9 — attack triggered May 20. System-wide technology outage. 941 GB of data stolen. Organization refused to pay ransom. Interlock leaked stolen data publicly. Included SSNs, financial account numbers, driver's license numbers, medical and treatment information. Recovery took months.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Dwell Time Detection</span>
-        <span class="gap-tag">Network Monitoring</span>
-        <span class="gap-tag">NIST 800-53 SI-3</span>
-        <span class="gap-tag">Backup Integrity</span>
-      </div>
-    </div>
-
-    <!-- PIH HEALTH -->
-    <div class="incident-card critical" data-severity="critical" data-sector="hospital" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">PIH Health Hospitals</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Threat Group TBD</span>
-        <span class="meta-tag">Health System · California</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">2.95M</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Over 3 million patients lost access to healthcare services. Medical records inaccessible. Scheduled surgeries postponed. Emergency rooms diverted patients to other facilities. Names, addresses, medical information, health insurance data, SSNs, financial account information, and credit/debit card numbers compromised.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">EHR Continuity Planning</span>
-        <span class="gap-tag">ER Downtime Protocols</span>
-        <span class="gap-tag">HIPAA §164.308</span>
-        <span class="gap-tag">Patient Diversion Risk</span>
-      </div>
-    </div>
-
-    <!-- SIMONMED IMAGING -->
-    <div class="incident-card critical" data-severity="critical" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">SimonMed Imaging</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">January 2025</span>
-        <span class="meta-tag threat">Medusa</span>
-        <span class="meta-tag">Medical Imaging · Arizona</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">1.28M</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Medusa ransomware group demanded $1 million ransom for 212 GB of stolen data. Arizona-based medical imaging provider notified over 1.27 million patients in October 2025. Imaging services disrupted affecting diagnostic timelines for cancer screenings, orthopedic, and emergency imaging.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Imaging System Isolation</span>
-        <span class="gap-tag">Ransom Payment Policy</span>
-        <span class="gap-tag">NIST 800-53 CP-9</span>
-      </div>
-    </div>
-
-    <!-- CLINICAL DIAGNOSTICS / EUROFINS -->
-    <div class="incident-card critical" data-severity="critical" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Clinical Diagnostics (Eurofins)</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">July 2025</span>
-        <span class="meta-tag threat">Nova</span>
-        <span class="meta-tag">Lab Testing · Netherlands</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">941K</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Laboratory testing service paid initial ransom demand — then Nova returned with a second ransom demand after the organization involved law enforcement. Double extortion tactic documented. Lab results and patient diagnostic data exposed. Critical example of why ransom payment does not guarantee data safety.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Double Extortion Risk</span>
-        <span class="gap-tag">Lab Data Isolation</span>
-        <span class="gap-tag">Law Enforcement Protocol</span>
-      </div>
-    </div>
-
-    <!-- BELL AMBULANCE -->
-    <div class="incident-card high" data-severity="high" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Bell Ambulance</div>
-        <span class="severity-badge high">High</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Medusa</span>
-        <span class="meta-tag">EMS · Wisconsin</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">114K</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Emergency medical services provider breached by Medusa ransomware. Patient transport records, medical histories, and emergency response data exposed. EMS organizations increasingly targeted as high-value entry points into broader healthcare ecosystems. Direct patient safety implications during active response operations.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">EMS System Security</span>
-        <span class="gap-tag">Mobile Device Management</span>
-        <span class="gap-tag">Field Device Encryption</span>
-      </div>
-    </div>
-
-    <!-- COVENANT HEALTH -->
-    <div class="incident-card critical" data-severity="critical" data-sector="hospital" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Covenant Health</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Qilin</span>
-        <span class="meta-tag">Health System · Multi-state</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">Undisclosed</div>
-        <div class="records-label">records — investigation ongoing</div>
-      </div>
-      <div class="impact-text">
-        Qilin ransomware group — one of three most active groups targeting healthcare in 2025 alongside INC Ransom and RansomHub. Health system operations disrupted across multiple facilities. Patient data exfiltrated and posted to Qilin leak site. Clinical workflows and scheduling systems impacted.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Multi-Site Incident Response</span>
-        <span class="gap-tag">Leak Site Monitoring</span>
-        <span class="gap-tag">HIPAA Breach Notification</span>
-      </div>
-    </div>
-
-    <!-- TEXAS DIGESTIVE SPECIALISTS -->
-    <div class="incident-card high" data-severity="high" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Texas Digestive Specialists</div>
-        <span class="severity-badge high">High</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Interlock</span>
-        <span class="meta-tag">Specialty Practice · Texas</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">44.5K</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Specialty gastroenterology practice breached as part of Interlock's broader healthcare targeting campaign in 2025. Patient records including diagnostic and treatment information exposed. Demonstrates that smaller specialty practices are not protected by size — threat actors target the full healthcare supply chain.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Small Practice Security</span>
-        <span class="gap-tag">Specialty EHR Protection</span>
-        <span class="gap-tag">Supply Chain Risk</span>
-      </div>
-    </div>
-
-    <!-- HIGHLANDS ONCOLOGY GROUP -->
-    <div class="incident-card high" data-severity="high" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Highlands Oncology Group PA</div>
-        <span class="severity-badge high">High</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Medusa</span>
-        <span class="meta-tag">Oncology Practice · Arkansas</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">114K</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Oncology practice targeted by Medusa. Cancer patient data — among the most sensitive healthcare information — exposed. Chemotherapy schedules, treatment plans, pathology results, and personal health information at risk. Oncology practices represent high-value targets due to the sensitivity and completeness of longitudinal patient records.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Oncology Data Classification</span>
-        <span class="gap-tag">Longitudinal Record Protection</span>
-        <span class="gap-tag">HIPAA Sensitive Data</span>
-      </div>
-    </div>
-
-    <!-- CHANGE HEALTHCARE (2024 ANCHOR) -->
-    <div class="incident-card critical" data-severity="critical" data-sector="vendor" data-year="2024">
-      <div class="card-top">
-        <div class="org-name">Change Healthcare (UnitedHealth)</div>
-        <span class="severity-badge critical">Critical</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">February 2024</span>
-        <span class="meta-tag threat">ALPHV/BlackCat</span>
-        <span class="meta-tag">Health IT · National</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">190M</div>
-        <div class="records-label">Americans impacted</div>
-      </div>
-      <div class="impact-text">
-        The defining healthcare cyber event of the decade. Prescription processing and insurance payments shut down nationwide for weeks. 190 million Americans had data exposed. Single point of failure across the US healthcare payment infrastructure. Became the operational blueprint for healthcare-focused attackers in 2025 and beyond. UnitedHealth paid $22M ransom — data still leaked.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Single Point of Failure</span>
-        <span class="gap-tag">Healthcare Payment Infrastructure</span>
-        <span class="gap-tag">Third-Party Concentration Risk</span>
-        <span class="gap-tag">MFA Bypass</span>
-        <span class="gap-tag">NIST 800-53 SC-5</span>
-      </div>
-    </div>
-
-    <!-- RICHMOND BEHAVIORAL HEALTH AUTHORITY -->
-    <div class="incident-card high" data-severity="high" data-sector="hospital" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Richmond Behavioral Health Authority</div>
-        <span class="severity-badge high">High</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Qilin</span>
-        <span class="meta-tag">Behavioral Health · Virginia</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">113K</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Behavioral health organization targeted by Qilin. Mental health and substance use disorder records — among the most legally protected health data — exposed. Behavioral health records carry heightened sensitivity under 42 CFR Part 2. Breach creates downstream risks including insurance discrimination, employment consequences, and personal safety issues for patients.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">42 CFR Part 2 Compliance</span>
-        <span class="gap-tag">Behavioral Health Data Protection</span>
-        <span class="gap-tag">Sensitive Population Risk</span>
-      </div>
-    </div>
-
-    <!-- CENTRAL TEXAS PEDIATRIC ORTHOPEDICS -->
-    <div class="incident-card high" data-severity="high" data-sector="vendor" data-year="2025">
-      <div class="card-top">
-        <div class="org-name">Central Texas Pediatric Orthopedics</div>
-        <span class="severity-badge high">High</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag date">2025</span>
-        <span class="meta-tag threat">Qilin</span>
-        <span class="meta-tag">Pediatric Practice · Texas</span>
-      </div>
-      <div class="records-row">
-        <div class="records-num">140K</div>
-        <div class="records-label">patient records breached</div>
-      </div>
-      <div class="impact-text">
-        Pediatric orthopedic practice breached by Qilin. Children's health records exposed — including growth data, surgical histories, and developmental records. Minor patients cannot consent to or protect their own data. Pediatric records have a decades-long exposure window given patient age at time of breach.
-      </div>
-      <div class="gap-tags">
-        <span class="gap-tag">Minor Patient Data Protection</span>
-        <span class="gap-tag">Long-Term Breach Exposure</span>
-        <span class="gap-tag">Pediatric EHR Security</span>
-      </div>
-    </div>
-
+  <div class="filters" id="filters">
+    <button class="fbtn active" data-f="all">All</button>
+    <button class="fbtn" data-f="critical">Critical</button>
+    <button class="fbtn" data-f="high">High</button>
+    <button class="fbtn" data-f="hospital">Hospital / Health System</button>
+    <button class="fbtn" data-f="vendor">Vendor / Business</button>
+    <button class="fbtn" data-f="2025">2025</button>
+    <button class="fbtn" data-f="2024">2024</button>
   </div>
 
-  <!-- TREND INTELLIGENCE -->
+  <div class="summary" id="summary"></div>
+
+  <div class="igrid" id="grid"></div>
+
   <div class="trends">
-    <div class="trends-header">2025–2026 Intelligence Trends</div>
-    <div class="trends-grid">
-      <div class="trend-item">
-        <div class="trend-title">Shift to Vendor Targeting</div>
-        <div class="trend-text">Attacks on healthcare businesses — vendors, MSPs, billing providers — surged <strong>30% in 2025</strong>. Threat actors discovered that targeting a single vendor creates cascading disruption across hundreds of provider organizations simultaneously.</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-title">Vulnerability Exploitation Overtakes Credentials</div>
-        <div class="trend-text">For the first time in three years, <strong>exploited vulnerabilities (33%)</strong> surpassed credential-based attacks as the leading technical root cause — overtaking phishing and stolen credentials that dominated 2023–2024.</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-title">Top Three Threat Groups</div>
-        <div class="trend-text"><strong>Interlock, Qilin (GOLD FEATHER), and RansomHub (GOLD HUBBARD)</strong> dominated healthcare targeting in 2025 based on leak site observations. INC Ransom led by incident volume; Interlock led by total records stolen.</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-title">2026 Emerging Threat</div>
-        <div class="trend-text">Health sector security professionals identify <strong>AI-enabled attacks</strong> as the leading threat for 2026 — surpassing ransomware for the first time. Zero-day exploits and third-party breaches follow. The attack surface is expanding faster than defenses.</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-title">Dwell Time Remains Critical</div>
-        <div class="trend-text">The Kettering Health attack illustrated the danger: <strong>network breached April 9 — attack triggered May 20</strong>. Six weeks of undetected dwell time. Early detection remains the single most impactful defensive investment available to healthcare organizations.</div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-title">DFR Framework Gap</div>
-        <div class="trend-text">No current framework adequately addresses the <strong>clinical continuity dimension</strong> of ransomware — what happens to patients during downtime. HIPAA, NIST, and HHS 405(d) all focus on data protection, not care delivery continuity during active incidents. This is the gap this lab exists to document.</div>
-      </div>
+    <h2>2025–2026 intelligence trends</h2>
+    <div class="tgrid">
+      <div class="titem"><div class="th">Shift to vendor targeting</div><p>Attacks on healthcare businesses — vendors, MSPs, billing providers — surged <strong>30% in 2025</strong>. Hitting one vendor cascades disruption across hundreds of providers at once.</p></div>
+      <div class="titem"><div class="th">Vulnerabilities overtake credentials</div><p>For the first time in three years, <strong>exploited vulnerabilities (33%)</strong> passed credential-based attacks as the leading technical root cause.</p></div>
+      <div class="titem"><div class="th">Top threat groups</div><p><strong>Interlock, Qilin, and RansomHub</strong> dominated healthcare targeting in 2025. INC Ransom led by incident count; Interlock led by total records stolen.</p></div>
+      <div class="titem"><div class="th">2026 emerging threat</div><p>Health-sector security pros now rank <strong>AI-enabled attacks</strong> as the top threat for 2026 — surpassing ransomware for the first time.</p></div>
+      <div class="titem"><div class="th">Dwell time still decisive</div><p>Kettering was breached <strong>April 9, triggered May 20</strong> — six weeks undetected. Early detection remains the highest-impact defensive investment.</p></div>
+      <div class="titem"><div class="th">The DFR framework gap</div><p>No framework adequately covers the <strong>clinical continuity</strong> dimension — what happens to patients during downtime. HIPAA, NIST, and HHS 405(d) protect data, not care delivery. That's the gap this lab documents.</p></div>
     </div>
-
-    <div class="source-note">
-      Sources: HHS OCR Breach Portal · FBI/IC3 Healthcare Sector Report 2025 · Comparitech Healthcare Ransomware Roundup 2025 · Sophos State of Ransomware in Healthcare 2025 · HIPAA Journal Largest Healthcare Data Breaches 2025 · Health-ISAC 2026 Global Health Sector Threat Landscape · Industrial Cyber · SecurityWeek · MedTech Dive · Healthcare Dive. All incidents sourced from public disclosures and verified media reporting. Every incident here represents patients whose care was disrupted.
-    </div>
+    <div class="srcnote">Sources: HHS OCR Breach Portal · FBI/IC3 Healthcare Sector Report 2025 · Comparitech Healthcare Ransomware Roundup 2025 · Sophos State of Ransomware in Healthcare 2025 · HIPAA Journal · Health-ISAC 2026 Global Health Sector Threat Landscape. All incidents from public disclosures and verified reporting. Per-incident links point to the HHS OCR portal — swap in specific reporting URLs as you confirm them.</div>
   </div>
-
 </div>
 
 <script>
-function filterCards(type, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+const incidents=[
+  {org:"Change Healthcare (UnitedHealth)",records:190000000,recLabel:"individuals impacted",date:"Feb 2024",sortDate:202402,year:"2024",sector:"vendor",severity:"critical",threat:"ALPHV/BlackCat",setting:"Health IT · National",impact:"The defining healthcare cyber event of the decade. Prescription processing and insurance payments offline nationwide for weeks. Single point of failure across US healthcare payments — the operational blueprint for 2025 attackers. $22M ransom paid; data still leaked.",gaps:["Single Point of Failure","Payment Infrastructure","Third-Party Concentration","MFA Bypass"]},
+  {org:"PIH Health Hospitals",records:2947264,recLabel:"patient records",date:"2025",sortDate:202506,year:"2025",sector:"hospital",severity:"critical",threat:"Threat Group TBD",setting:"Health System · California",impact:"Over 3M patients lost access to care. Records inaccessible, surgeries postponed, ERs diverted. Names, SSNs, medical and insurance data, financial and card numbers compromised.",gaps:["EHR Continuity Planning","ER Downtime Protocols","HIPAA §164.308","Patient Diversion Risk"]},
+  {org:"DaVita Inc.",records:2689826,recLabel:"patient records",date:"Mar–Apr 2025",sortDate:202503,year:"2025",sector:"vendor",severity:"critical",threat:"Interlock",setting:"Dialysis · National",impact:"Unauthorized access to a dialysis labs database. Names, SSNs, insurance data, lab results exposed. Billing disrupted across 2,600+ centers. 1.51 TB posted publicly.",gaps:["Vendor Network Segmentation","Data Exfiltration Detection","HIPAA §164.312"]},
+  {org:"Kettering Health",records:1695382,recLabel:"patient records",date:"Apr–May 2025",sortDate:202505,year:"2025",sector:"hospital",severity:"critical",threat:"Interlock",setting:"Health System · Ohio",impact:"Breached April 9, attack triggered May 20 — six weeks of dwell time. System-wide outage, 941 GB stolen. Ransom refused; data leaked. SSNs, financial, and medical data exposed.",gaps:["Dwell Time Detection","Network Monitoring","NIST 800-53 SI-3","Backup Integrity"]},
+  {org:"SimonMed Imaging",records:1275669,recLabel:"patient records",date:"Jan 2025",sortDate:202501,year:"2025",sector:"vendor",severity:"critical",threat:"Medusa",setting:"Medical Imaging · Arizona",impact:"Medusa demanded $1M for 212 GB of stolen data. Imaging disrupted, affecting diagnostic timelines for cancer screening, orthopedic, and emergency imaging.",gaps:["Imaging System Isolation","Ransom Payment Policy","NIST 800-53 CP-9"]},
+  {org:"Clinical Diagnostics (Eurofins)",records:941000,recLabel:"patient records",date:"Jul 2025",sortDate:202507,year:"2025",sector:"vendor",severity:"critical",threat:"Nova",setting:"Lab Testing · Netherlands",impact:"Paid the initial ransom — then Nova returned with a second demand after law enforcement was involved. Double-extortion case study: payment does not guarantee data safety.",gaps:["Double Extortion Risk","Lab Data Isolation","Law Enforcement Protocol"]},
+  {org:"Covenant Health",records:0,recLabel:"records — investigation ongoing",date:"2025",sortDate:202506,year:"2025",sector:"hospital",severity:"critical",threat:"Qilin",setting:"Health System · Multi-state",impact:"Qilin — among the most active healthcare groups of 2025. Operations disrupted across multiple facilities; data exfiltrated and posted to the Qilin leak site. Clinical scheduling impacted.",gaps:["Multi-Site Incident Response","Leak Site Monitoring","HIPAA Breach Notification"]},
+  {org:"Central Texas Pediatric Orthopedics",records:140000,recLabel:"patient records",date:"2025",sortDate:202506,year:"2025",sector:"vendor",severity:"high",threat:"Qilin",setting:"Pediatric Practice · Texas",impact:"Children's health records exposed — growth data, surgical histories, developmental records. Minors can't protect their own data, and pediatric records carry a decades-long exposure window.",gaps:["Minor Patient Data Protection","Long-Term Breach Exposure","Pediatric EHR Security"]},
+  {org:"Highlands Oncology Group PA",records:114000,recLabel:"patient records",date:"2025",sortDate:202506,year:"2025",sector:"vendor",severity:"high",threat:"Medusa",setting:"Oncology Practice · Arkansas",impact:"Cancer patient data — among the most sensitive — exposed: chemo schedules, treatment plans, pathology results. Oncology records are high-value for their completeness.",gaps:["Oncology Data Classification","Longitudinal Record Protection","HIPAA Sensitive Data"]},
+  {org:"Bell Ambulance",records:114000,recLabel:"patient records",date:"2025",sortDate:202506,year:"2025",sector:"vendor",severity:"high",threat:"Medusa",setting:"EMS · Wisconsin",impact:"EMS provider breached by Medusa. Transport records and medical histories exposed. EMS is increasingly targeted as a high-value entry point into the broader healthcare ecosystem.",gaps:["EMS System Security","Mobile Device Management","Field Device Encryption"]},
+  {org:"Richmond Behavioral Health Authority",records:113000,recLabel:"patient records",date:"2025",sortDate:202506,year:"2025",sector:"hospital",severity:"high",threat:"Qilin",setting:"Behavioral Health · Virginia",impact:"Mental health and substance-use records — among the most legally protected data, under 42 CFR Part 2 — exposed. Downstream risks include insurance and employment discrimination.",gaps:["42 CFR Part 2 Compliance","Behavioral Health Data Protection","Sensitive Population Risk"]},
+  {org:"Texas Digestive Specialists",records:44579,recLabel:"patient records",date:"2025",sortDate:202506,year:"2025",sector:"vendor",severity:"high",threat:"Interlock",setting:"Specialty Practice · Texas",impact:"Specialty GI practice swept up in Interlock's broader 2025 campaign. Diagnostic and treatment data exposed — proof that small practices aren't protected by size.",gaps:["Small Practice Security","Specialty EHR Protection","Supply Chain Risk"]}
+];
+const HHS="https://ocrportal.hhs.gov/ocr/breach/breach_report.jsf";
 
-  const cards = document.querySelectorAll('.incident-card');
-  let visible = 0;
+function fmt(n){ if(n>=1e6) return (n/1e6).toFixed(n%1e6===0?0:2).replace(/\.00$/,'')+'M'; if(n>=1e3) return Math.round(n/1e3)+'K'; return n.toLocaleString(); }
+const sevRank={critical:0,high:1,medium:2};
+let state={filter:'all',q:'',sort:'records'};
 
-  cards.forEach(card => {
-    let show = false;
-    if (type === 'all') {
-      show = true;
-    } else if (type === 'critical' || type === 'high' || type === 'medium') {
-      show = card.dataset.severity === type;
-    } else if (type === 'hospital' || type === 'vendor') {
-      show = card.dataset.sector === type;
-    } else if (type === '2025' || type === '2024') {
-      show = card.dataset.year === type;
-    }
-    card.style.display = show ? 'flex' : 'none';
-    if (show) visible++;
-  });
-
-  const grid = document.getElementById('incidentGrid');
-  let noResults = grid.querySelector('.no-results');
-  if (visible === 0) {
-    if (!noResults) {
-      const div = document.createElement('div');
-      div.className = 'no-results';
-      div.textContent = 'No incidents match this filter.';
-      grid.appendChild(div);
-    }
-  } else {
-    if (noResults) noResults.remove();
+function matches(i){
+  const f=state.filter;
+  let ok=true;
+  if(f==='critical'||f==='high') ok=i.severity===f;
+  else if(f==='hospital'||f==='vendor') ok=i.sector===f;
+  else if(f==='2025'||f==='2024') ok=i.year===f;
+  if(ok && state.q){
+    const hay=(i.org+' '+i.threat+' '+i.setting+' '+i.impact+' '+i.gaps.join(' ')).toLowerCase();
+    ok=hay.includes(state.q.toLowerCase());
   }
+  return ok;
 }
-</script>
+function sortFn(a,b){
+  if(state.sort==='records') return b.records-a.records;
+  if(state.sort==='date') return b.sortDate-a.sortDate;
+  if(state.sort==='severity') return sevRank[a.severity]-sevRank[b.severity]||b.records-a.records;
+  if(state.sort==='org') return a.org.localeCompare(b.org);
+  return 0;
+}
+function render(){
+  const list=incidents.filter(matches).sort(sortFn);
+  const grid=document.getElementById('grid');
+  if(!list.length){ grid.innerHTML='<div class="empty">No incidents match this filter.</div>'; }
+  else {
+    grid.innerHTML=list.map(i=>`
+      <div class="icard ${i.severity}">
+        <div class="ctop"><div class="org">${i.org}</div><span class="badge ${i.severity}">${i.severity}</span></div>
+        <div class="cmeta"><span class="mtag">${i.date}</span><span class="mtag threat" data-threat="${i.threat}">${i.threat}</span><span class="mtag">${i.setting}</span></div>
+        <div class="recs"><div class="n">${i.records>0?fmt(i.records):'—'}</div><div class="l">${i.recLabel}</div></div>
+        <div class="impact">${i.impact}</div>
+        <div class="gaps">${i.gaps.map(g=>`<span class="gap">${g}</span>`).join('')}</div>
+        <div class="csrc"><a href="${HHS}" target="_blank" rel="noopener">Verify · HHS OCR &rarr;</a><span class="vf">public disclosure</span></div>
+      </div>`).join('');
+    grid.querySelectorAll('.mtag.threat').forEach(t=>t.addEventListener('click',()=>{document.getElementById('search').value=t.dataset.threat;state.q=t.dataset.threat;render();}));
+  }
+  const totalRec=list.reduce((s,i)=>s+i.records,0);
+  document.getElementById('summary').innerHTML=`Showing <b>${list.length}</b> of ${incidents.length} incidents · <b>${totalRec.toLocaleString()}</b> individuals impacted`;
+  document.getElementById('st-count').textContent=incidents.length;
+  document.getElementById('st-records').textContent=fmt(incidents.reduce((s,i)=>s+i.records,0))+'+';
+}
+document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('.fbtn');if(!b)return;document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.filter=b.dataset.f;render();});
+document.getElementById('search').addEventListener('input',e=>{state.q=e.target.value;render();});
+document.getElementById('sort').addEventListener('change',e=>{state.sort=e.target.value;render();});
 
+(function(){var root=document.documentElement,btn=document.getElementById('themeBtn'),lbl=document.getElementById('themeLbl');
+function set(t){root.setAttribute('data-theme',t);lbl.textContent=(t==='dark'?'Light':'Dark');}
+try{var p=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches;set(p?'light':'dark');}catch(e){set('dark');}
+btn.addEventListener('click',function(){set(root.getAttribute('data-theme')==='dark'?'light':'dark');});})();
+render();
+</script>
 </body>
 </html>

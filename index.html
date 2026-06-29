@@ -30,6 +30,8 @@
 
     .mode-bar{position:fixed;top:0;left:0;right:0;z-index:200;background:var(--bg-2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;height:40px;padding:0 1rem;}
     .mode-group{display:flex;align-items:center;height:100%;}
+    .mode-tag{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--emerald);padding:0 0.9rem 0 0.2rem;white-space:nowrap;}
+    @media(max-width:600px){.mode-tag{display:none;}}
     .mode-btn{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0 1.1rem;height:100%;border:none;background:transparent;color:var(--faint);cursor:pointer;transition:all 0.2s;}
     .mode-btn.active{background:var(--emerald);color:var(--bg);}
     .mode-btn:hover:not(.active){color:var(--text);}
@@ -248,8 +250,9 @@
 <body>
 <div class="mode-bar">
   <div class="mode-group">
-    <button class="mode-btn active" onclick="setMode('pro',this)">Professional Mode</button>
-    <button class="mode-btn" onclick="setMode('student',this)">Student Mode — Ages 11–15</button>
+    <span class="mode-tag">I teach both:</span>
+    <button class="mode-btn active" onclick="setMode('pro',this)">For Security Pros</button>
+    <button class="mode-btn" onclick="setMode('student',this)">For Students · 11–15</button>
   </div>
   <button class="theme-toggle" id="themeBtn" aria-label="Switch light or dark mode"><span class="dot" aria-hidden="true"></span><span id="themeLbl">Light</span></button>
 </div>

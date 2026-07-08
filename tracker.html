@@ -21,7 +21,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 
 .bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
 .bar-in{max-width:var(--max);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px}
-.brand{display:flex;align-items:baseline;gap:9px;font-family:'Bebas Neue',sans-serif;letter-spacing:.06em;font-size:22px;line-height:1}
+.brand{display:flex;align-items:baseline;gap:9px;font-family:var(--display);letter-spacing:.06em;font-size:22px;line-height:1}
 .brand .pulse{width:7px;height:7px;border-radius:50%;background:var(--crimson);display:inline-block;animation:pulse 2s infinite}
 .brand .sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
 .barnav{display:flex;align-items:center;gap:16px}
@@ -38,15 +38,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 
 .header{padding:46px 0 30px;border-bottom:1px solid var(--border);margin-bottom:30px}
 .eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--emerald);margin-bottom:14px;display:flex;align-items:center;gap:9px}
-h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.02;letter-spacing:.02em;margin-bottom:12px}
-h1 .accent{color:var(--crimson)}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.02;letter-spacing:.02em;margin-bottom:12px}
+h1 .accent{color:var(--green)}
 .sub{font-size:14px;font-weight:300;color:var(--dim);line-height:1.7;max-width:640px}
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:26px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px 17px}
 .stat .l{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
-.stat .v{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;letter-spacing:.02em}
-.stat .v.crimson{color:var(--crimson)}
+.stat .v{font-family:var(--display);font-size:30px;line-height:1;letter-spacing:.02em}
+.stat .v.crimson{color:var(--amber)}
 .stat .v.emerald{color:var(--emerald)}
 .stat .v.brass{color:var(--brass)}
 .stat .s{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:3px}
@@ -59,13 +59,13 @@ h1 .accent{color:var(--crimson)}
 select.sort{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;height:38px;padding:0 12px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;cursor:pointer}
 .filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
 .fbtn{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:6px 13px;border:1px solid var(--border);background:var(--surface);color:var(--dim);cursor:pointer;border-radius:6px;transition:all .18s}
-.fbtn:hover,.fbtn.active{border-color:var(--crimson);color:var(--text);background:color-mix(in srgb,var(--crimson) 12%,transparent)}
+.fbtn:hover,.fbtn.active{border-color:var(--green);color:var(--text);background:color-mix(in srgb,var(--green) 12%,transparent)}
 .summary{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--dim);margin-bottom:20px}
-.summary b{color:var(--crimson);font-weight:500}
+.summary b{color:var(--amber);font-weight:500}
 
 .igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
 .icard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:flex;flex-direction:column;gap:11px;transition:border-color .2s}
-.icard:hover{border-color:color-mix(in srgb,var(--crimson) 45%,var(--border))}
+.icard:hover{border-color:color-mix(in srgb,var(--green) 45%,var(--border))}
 .icard.critical{border-left:3px solid var(--crimson)}
 .icard.high{border-left:3px solid var(--brass)}
 .ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -75,10 +75,10 @@ select.sort{background:var(--surface);border:1px solid var(--border);color:var(-
 .badge.high{background:color-mix(in srgb,var(--brass) 14%,transparent);color:var(--brass);border:1px solid color-mix(in srgb,var(--brass) 40%,transparent)}
 .cmeta{display:flex;flex-wrap:wrap;gap:6px}
 .mtag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;padding:3px 8px;border:1px solid var(--border);color:var(--dim);border-radius:5px;background:var(--surface-2)}
-.mtag.threat{color:var(--crimson);border-color:color-mix(in srgb,var(--crimson) 30%,transparent);cursor:pointer}
-.mtag.threat:hover{background:color-mix(in srgb,var(--crimson) 12%,transparent)}
+.mtag.threat{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 30%,transparent);cursor:pointer}
+.mtag.threat:hover{background:color-mix(in srgb,var(--amber) 12%,transparent)}
 .recs{display:flex;align-items:baseline;gap:7px}
-.recs .n{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;color:var(--crimson);letter-spacing:.02em}
+.recs .n{font-family:var(--display);font-size:26px;line-height:1;color:var(--amber);letter-spacing:.02em}
 .recs .l{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
 .impact{font-size:12.5px;font-weight:300;color:var(--dim);line-height:1.7;border-left:1px solid var(--border);padding-left:12px}
 .gaps{display:flex;flex-wrap:wrap;gap:5px}
@@ -90,7 +90,7 @@ select.sort{background:var(--surface);border:1px solid var(--border);color:var(-
 .empty{grid-column:1/-1;text-align:center;padding:46px;font-family:'DM Mono',monospace;font-size:12px;color:var(--dim)}
 
 .trends{margin-top:38px;border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:26px 30px}
-.trends h2{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:24px;letter-spacing:.03em;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+.trends h2{font-family:var(--display);font-weight:400;font-size:24px;letter-spacing:.03em;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid var(--border)}
 .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
 .titem .th{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin-bottom:7px}
 .titem p{font-size:13px;font-weight:300;color:var(--dim);line-height:1.7}
@@ -104,10 +104,10 @@ select.sort{background:var(--surface);border:1px solid var(--border);color:var(-
 .dfr{margin:12px 0 4px;padding:11px 12px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border)}
 .dfr-h{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
 .dfr-row{display:flex;align-items:center;gap:13px}
-.dfr-n{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:.9;letter-spacing:.01em;flex-shrink:0}
+.dfr-n{font-family:var(--display);font-size:34px;line-height:.9;letter-spacing:.01em;flex-shrink:0}
 .dfr-n span{font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.05em;margin-left:1px}
 .dfr-cf{display:flex;flex-wrap:wrap;gap:5px}
-.cf{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:color-mix(in srgb,var(--crimson) 12%,transparent);color:var(--crimson);border:1px solid color-mix(in srgb,var(--crimson) 28%,transparent)}
+.cf{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:color-mix(in srgb,var(--amber) 12%,transparent);color:var(--amber);border:1px solid color-mix(in srgb,var(--amber) 28%,transparent)}
 .dfr.sev{border-left:3px solid var(--crimson)} .dfr.sev .dfr-n{color:var(--crimson)}
 .dfr.mod{border-left:3px solid var(--brass)} .dfr.mod .dfr-n{color:var(--brass)}
 .dfr.low{border-left:3px solid var(--emerald)} .dfr.low .dfr-n{color:var(--emerald)}

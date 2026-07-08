@@ -41,6 +41,8 @@
   --surface-2: #232B34;
   --text: #F4F4F1;
   --dim: #95A0AB;
+  --faint: #6b7480;
+  --line: #222a33;
 }
 
 [data-theme="light"] {

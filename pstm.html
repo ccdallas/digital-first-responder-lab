@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient-Side Threat Modeling — Applied | DFR Lab</title>
+  <meta name="description" content="Patient-Side Threat Modeling (PSTM): a five-lens IoMT threat modeling method written from the patient's side of the device. By Chaunda C. Dallas, MSIT — applied across every scenario in the Digital First Responder Lab.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+
+    /* Accent used for text must clear WCAG AA on both grounds; raw brand green stays for grounds/borders. */
+    :root{--acc:#7FB8A2;--amber-text:#E0A83E;--btn-ink:#171C22;}
+    [data-theme="light"]{--acc:#1E5040;--amber-text:#8A6414;}
+
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s;}
+    a{color:inherit;}
+    ::selection{background:var(--green);color:#F4F4F1;}
+    :focus-visible{outline:2px solid var(--acc);outline-offset:3px;}
+    @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}}
+
+    .skip-link{position:absolute;left:-9999px;top:0;background:var(--green);color:#F4F4F1;padding:.6rem 1rem;z-index:300;font-family:var(--mono);font-size:.7rem;}
+    .skip-link:focus{left:0;}
+
+    nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:52px;flex-wrap:wrap;}
+    .nav-brand{font-family:var(--display);font-size:1.1rem;letter-spacing:0.12em;text-decoration:none;padding:.6rem 0;}
+    .nav-brand span{color:var(--acc);}
+    .nav-links{display:flex;gap:1.3rem;list-style:none;align-items:center;flex-wrap:wrap;}
+    .nav-links a{font-family:var(--mono);font-size:0.62rem;color:var(--dim);text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s;padding:.5rem 0;}
+    .nav-links a:hover{color:var(--acc);}
+    .nav-links a[aria-current="page"]{color:var(--text);border-bottom:1px solid var(--amber);}
+    .theme-toggle{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:5px 11px;font-family:var(--mono);font-size:0.58rem;letter-spacing:0.12em;cursor:pointer;text-transform:uppercase;}
+    .theme-toggle:hover{border-color:var(--acc);}
+    .theme-toggle .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);}
+
+    header{position:relative;padding:6rem 2rem 4.5rem;border-bottom:1px solid var(--border);overflow:hidden;}
+    .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 85% 10%,color-mix(in srgb,var(--green) 22%,transparent) 0%,transparent 60%),var(--bg);}
+    .hero-grid-lines{position:absolute;inset:0;background-image:linear-gradient(color-mix(in srgb,var(--green) 10%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--green) 10%,transparent) 1px,transparent 1px);background-size:64px 64px;}
+    .hero-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto;}
+    .eyebrow{font-family:var(--mono);font-size:0.66rem;letter-spacing:0.22em;color:var(--acc);text-transform:uppercase;margin-bottom:1.6rem;}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2.6rem,7vw,5.2rem);line-height:1.02;letter-spacing:0.01em;margin-bottom:1.1rem;max-width:14ch;}
+    .ecg{display:block;width:min(420px,80%);height:44px;margin:.4rem 0 1.8rem;}
+    .hero-def{font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(1.25rem,2.6vw,1.75rem);line-height:1.35;max-width:34ch;margin-bottom:1.6rem;}
+    .hero-sub{font-size:0.95rem;color:var(--dim);max-width:600px;line-height:1.8;margin-bottom:2.2rem;}
+    .hero-sub strong{color:var(--text);font-weight:500;}
+    .hero-ctas{display:flex;gap:0.9rem;flex-wrap:wrap;margin-bottom:2.6rem;}
+    .btn{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:0.66rem;letter-spacing:0.13em;text-transform:uppercase;text-decoration:none;padding:0.9rem 1.5rem;transition:opacity .2s,border-color .2s;}
+    .btn-amber{background:var(--amber);color:var(--btn-ink);}
+    .btn-amber:hover{opacity:.88;}
+    .btn-ghost{border:1px solid var(--border);color:var(--text);}
+    .btn-ghost:hover{border-color:var(--acc);}
+    .hero-stats{display:flex;gap:2.8rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.6rem;}
+    .hstat-num{font-family:var(--display);font-size:2rem;font-weight:600;color:var(--acc);line-height:1;}
+    .hstat-lbl{font-family:var(--mono);font-size:0.58rem;color:var(--faint);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.3rem;}
+
+    section{border-bottom:1px solid var(--border);}
+    .container{max-width:1000px;margin:0 auto;padding:4.5rem 2rem;}
+    .alt{background:var(--bg-2);}
+    .eyebrow-section{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.22em;color:var(--acc);text-transform:uppercase;margin-bottom:2.2rem;display:flex;align-items:center;gap:1rem;}
+    .eyebrow-section::after{content:'';flex:1;height:1px;background:var(--line);max-width:180px;}
+    h2{font-family:var(--display);font-weight:600;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.08;letter-spacing:0.01em;margin-bottom:1.4rem;}
+    .lead{font-size:0.97rem;color:var(--dim);line-height:1.85;max-width:680px;}
+    .lead + .lead{margin-top:1.1rem;}
+    .lead strong{color:var(--text);font-weight:500;}
+    .statement{border-left:3px solid var(--green);padding:1.5rem 2rem;margin:2.2rem 0;background:color-mix(in srgb,var(--green) 7%,transparent);}
+    .statement p{font-family:var(--display);font-size:clamp(1.25rem,2.6vw,1.8rem);line-height:1.3;font-weight:500;}
+
+    .tbl-wrap{overflow-x:auto;margin-top:2.4rem;border:1px solid var(--line);}
+    table{border-collapse:collapse;width:100%;min-width:600px;background:var(--surface);}
+    caption{text-align:left;font-family:var(--mono);font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--faint);padding:0.9rem 1.2rem;background:var(--surface-2);border-bottom:1px solid var(--line);}
+    th,td{padding:0.95rem 1.2rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;font-size:0.85rem;line-height:1.55;}
+    tr:last-child th,tr:last-child td{border-bottom:none;}
+    thead th{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--acc);background:var(--surface-2);border-bottom:1px solid var(--line);}
+    tbody th[scope="row"]{font-family:var(--mono);font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);font-weight:400;white-space:nowrap;}
+    td{color:var(--dim);}
+    td strong{color:var(--text);font-weight:500;}
+    .col-patient{background:color-mix(in srgb,var(--green) 6%,transparent);}
+
+    /* Lenses */
+    .lens{border:1px solid var(--line);background:var(--surface);margin-top:1.6rem;}
+    .lens-head{display:flex;align-items:baseline;gap:1.4rem;padding:1.7rem 2.2rem 0;flex-wrap:wrap;}
+    .lens-no{font-family:var(--mono);font-size:0.9rem;color:var(--amber-text);letter-spacing:0.14em;}
+    .lens h3{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:0.02em;}
+    .lens-q{font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(1.1rem,2.2vw,1.4rem);line-height:1.4;padding:1.1rem 2.2rem 0;max-width:52ch;}
+    .lens-body{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem;padding:1.6rem 2.2rem 1.9rem;}
+    .lens-cell h4{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.18em;color:var(--acc);text-transform:uppercase;margin-bottom:0.7rem;}
+    .lens-cell p{font-size:0.87rem;color:var(--dim);line-height:1.75;}
+    .lens-cell p + p{margin-top:0.8rem;}
+    .lens-cell strong{color:var(--text);font-weight:500;}
+    .lens-verdict{border-top:1px solid var(--line);padding:1.15rem 2.2rem;font-size:0.9rem;color:var(--text);background:color-mix(in srgb,var(--green) 5%,transparent);}
+    .lens-verdict span{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:0.35rem;}
+    .tier-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.9rem;}
+    .tier{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.08em;border:1px solid var(--line);padding:0.4rem 0.7rem;color:var(--dim);}
+    .tier b{display:block;color:var(--text);font-weight:500;letter-spacing:0.12em;text-transform:uppercase;font-size:0.58rem;margin-bottom:0.2rem;}
+    .lat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:0.9rem;}
+    .lat{background:var(--surface-2);padding:0.85rem 0.95rem;}
+    .lat b{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text);font-weight:500;display:block;margin-bottom:0.3rem;}
+    .lat span{font-size:0.76rem;color:var(--dim);line-height:1.5;display:block;}
+
+    /* Worked example */
+    .finding{display:grid;grid-template-columns:64px 1fr auto;gap:1.2rem;padding:1.05rem 1.4rem;border:1px solid var(--line);border-top:none;background:var(--surface);align-items:baseline;}
+    .findings > .finding:first-of-type{border-top:1px solid var(--line);margin-top:2.2rem;}
+    .f-id{font-family:var(--mono);font-size:0.72rem;color:var(--acc);letter-spacing:0.1em;}
+    .f-text{font-size:0.87rem;color:var(--dim);line-height:1.6;}
+    .f-text strong{color:var(--text);font-weight:500;}
+    .f-cvss{font-family:var(--mono);font-size:0.66rem;color:var(--faint);letter-spacing:0.08em;white-space:nowrap;}
+    .reorder{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin-top:2.6rem;align-items:start;}
+    .rcol{border:1px solid var(--line);background:var(--surface);}
+    .rcol-patient{border-color:color-mix(in srgb,var(--green) 55%,var(--line));}
+    .rcol-head{padding:1.1rem 1.4rem;border-bottom:1px solid var(--line);background:var(--surface-2);}
+    .rcol-patient .rcol-head{background:color-mix(in srgb,var(--green) 14%,var(--surface-2));}
+    .rcol-head h4{font-family:var(--mono);font-size:0.64rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--text);font-weight:500;}
+    .rcol-head p{font-family:var(--mono);font-size:0.58rem;color:var(--faint);letter-spacing:0.08em;margin-top:0.25rem;}
+    .rrow{display:grid;grid-template-columns:30px 44px 1fr;gap:0.8rem;padding:0.95rem 1.4rem;border-bottom:1px solid var(--line);align-items:baseline;}
+    .rrow:last-child{border-bottom:none;}
+    .rrow-rank{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--acc);}
+    .rrow-id{font-family:var(--mono);font-size:0.66rem;color:var(--faint);letter-spacing:0.08em;}
+    .rrow-why{font-size:0.79rem;color:var(--dim);line-height:1.55;}
+    .rrow-why strong{color:var(--text);font-weight:500;}
+    .rrow-absent{opacity:0.55;}
+    .rrow-absent .rrow-rank{color:var(--faint);font-family:var(--mono);font-size:0.8rem;}
+    .lens-ref{font-family:var(--mono);font-size:0.58rem;color:var(--acc);letter-spacing:0.06em;white-space:nowrap;}
+    /* Crimson use #2 of 2: the one finding that reaches a patient fastest. */
+    .tag-crit{display:inline-block;font-family:var(--mono);font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;background:var(--crimson);color:#F3ECDD;padding:0.22rem 0.55rem;margin-left:0.5rem;}
+    .punchline{margin-top:2.4rem;border-left:3px solid var(--amber);padding:1.4rem 1.9rem;background:color-mix(in srgb,var(--amber) 6%,transparent);}
+    .punchline p{font-family:var(--display);font-size:clamp(1.15rem,2.3vw,1.5rem);line-height:1.4;font-weight:500;}
+
+    /* Scenario index */
+    .idx-note{font-size:0.85rem;color:var(--dim);max-width:640px;margin-top:-1rem;margin-bottom:2rem;line-height:1.7;}
+    .idx-lens{display:inline-block;font-family:var(--mono);font-size:0.58rem;letter-spacing:0.06em;border:1px solid color-mix(in srgb,var(--acc) 45%,transparent);color:var(--acc);padding:0.18rem 0.45rem;margin:0.12rem 0.18rem 0.12rem 0;white-space:nowrap;}
+    .idx-link{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber-text);text-decoration:none;white-space:nowrap;}
+    .idx-link:hover{text-decoration:underline;}
+    .sev-txt{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+    .sev-txt.is-crit{color:var(--text);font-weight:500;}
+
+    /* CTA band */
+    .cta-band{background:var(--green);border-bottom:none;}
+    .cta-band .container{padding:4.5rem 2rem 4.8rem;}
+    .cta-band h2{color:#F3ECDD;max-width:18ch;}
+    .cta-band .lead{color:color-mix(in srgb,#F3ECDD 78%,var(--green));max-width:640px;}
+    .cta-band .lead strong{color:#F3ECDD;}
+    .cta-eyebrow{font-family:var(--mono);font-size:0.62rem;letter-spacing:0.22em;color:var(--amber);text-transform:uppercase;margin-bottom:2rem;}
+    .cta-actions{display:flex;gap:0.9rem;flex-wrap:wrap;margin-top:2.2rem;}
+    .cta-band .btn-ghost{border-color:color-mix(in srgb,#F3ECDD 40%,transparent);color:#F3ECDD;}
+    .cta-band .btn-ghost:hover{border-color:#F3ECDD;}
+    .cta-fine{margin-top:1.6rem;font-family:var(--mono);font-size:0.62rem;letter-spacing:0.08em;color:color-mix(in srgb,#F3ECDD 62%,var(--green));}
+    .cta-fine a{color:#F3ECDD;text-decoration:underline;text-underline-offset:3px;}
+
+    footer{padding:2.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;border-top:1px solid var(--border);background:var(--bg-2);}
+    .footer-brand{font-family:var(--display);font-size:1.2rem;letter-spacing:0.1em;}
+    .footer-brand span{color:var(--acc);}
+    .footer-tag{font-family:var(--display);font-style:italic;font-size:0.95rem;color:var(--dim);}
+    .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap;}
+    .footer-links a{font-family:var(--mono);font-size:0.6rem;color:var(--dim);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;}
+    .footer-links a:hover{color:var(--acc);}
+    .footer-copy{font-family:var(--mono);font-size:0.58rem;color:var(--faint);letter-spacing:0.08em;flex-basis:100%;}
+
+    @media (max-width:820px){
+      .lens-body,.reorder{grid-template-columns:1fr;}
+      .lat-grid{grid-template-columns:1fr;}
+      header{padding:4.5rem 1.25rem 3.5rem;}
+      .container{padding:3.5rem 1.25rem;}
+      nav{padding:0 1.25rem;}
+      .lens-head,.lens-q{padding-left:1.4rem;padding-right:1.4rem;}
+      .lens-body{padding:1.4rem;}
+      .lens-verdict{padding:1.1rem 1.4rem;}
+      .finding{grid-template-columns:48px 1fr;}
+      .f-cvss{grid-column:2;}
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav aria-label="DFR Lab">
+  <a class="nav-brand" href="index.html">DFR <span>Lab</span></a>
+  <ul class="nav-links">
+    <li><a href="pstm.html" aria-current="page">PSTM</a></li>
+    <li><a href="index.html#scenarios">Scenarios</a></li>
+    <li><a href="ai-red-team.html">AI Red Team</a></li>
+    <li><a href="tracker.html">Intel Tracker</a></li>
+    <li><a href="https://chaundacdallas.com/method">The Method</a></li>
+    <li><button class="theme-toggle" id="themeBtn" aria-label="Switch light or dark mode"><span class="dot" aria-hidden="true"></span><span id="themeLbl">Light</span></button></li>
+  </ul>
+</nav>
+
+<header>
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-grid-lines" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <p class="eyebrow">DFR Lab / Applied Framework</p>
+    <h1>Patient-Side Threat Modeling</h1>
+    <!-- Crimson use #1 of 2: the single ECG beat. -->
+    <svg class="ecg" viewBox="0 0 420 44" aria-hidden="true" focusable="false">
+      <path d="M0 26 H130 L142 26 L150 20 L158 26 L172 26 L178 38 L186 4 L194 34 L200 26 L216 26 L228 18 L240 26 H420"
+            fill="none" stroke="#8B1E24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+    <p class="hero-def">Every IoMT threat model in existence is written from the network&rsquo;s point of view. Mine is written from the patient&rsquo;s side of the device.</p>
+    <p class="hero-sub">Network-side threat modeling asks <strong>what an attacker can reach</strong>. Patient-side threat modeling asks <strong>what happens to the human when it&rsquo;s reached</strong>. Five lenses, built from 28+ years of frontline emergency medicine, applied to every scenario in this lab.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-amber" href="#worked">See the reordering &darr;</a>
+      <a class="btn btn-ghost" href="https://chaundacdallas.com/method">Read the framework &rarr;</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hstat-num">5</div><div class="hstat-lbl">Lenses</div></div>
+      <div><div class="hstat-num">12</div><div class="hstat-lbl">Scenarios run through them</div></div>
+      <div><div class="hstat-num">1</div><div class="hstat-lbl">Live intelligence tracker</div></div>
+      <div><div class="hstat-num">5</div><div class="hstat-lbl">Frameworks mapped</div></div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section id="inversion" class="alt">
+  <div class="container">
+    <p class="eyebrow-section">01 &mdash; The inversion</p>
+    <h2>Same device. Different question.</h2>
+    <p class="lead">In enterprise IT, the triad runs Confidentiality &rarr; Integrity &rarr; Availability. At the bedside, that order inverts. A ventilator that stops is a code. A ventilator whose data leaks is a HIPAA letter. Standard risk scoring cannot see the difference between those two events. PSTM is built to see it.</p>
+    <div class="statement"><p>Network-side asks: what can an attacker reach?<br>Patient-side asks: what happens to the human when it&rsquo;s reached?</p></div>
+    <div class="tbl-wrap">
+      <table>
+        <caption>Network-side vs. patient-side threat modeling</caption>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">Network-side</th><th scope="col" class="col-patient">Patient-side</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Core question</th><td>What can an attacker reach?</td><td class="col-patient"><strong>What happens to the human when it&rsquo;s reached?</strong></td></tr>
+          <tr><th scope="row">Priority order</th><td>C &rarr; I &rarr; A</td><td class="col-patient"><strong>A &rarr; I &rarr; C</strong> on life-sustaining tiers</td></tr>
+          <tr><th scope="row">Unit of risk</th><td>Asset / node</td><td class="col-patient"><strong>Patient / procedure</strong></td></tr>
+          <tr><th scope="row">Prioritization driver</th><td>CVSS</td><td class="col-patient"><strong>Latency to harm</strong></td></tr>
+          <tr><th scope="row">Detection endpoint</th><td>The SOC</td><td class="col-patient"><strong>The bedside</strong></td></tr>
+          <tr><th scope="row">Blind spot</th><td>The clinical workaround</td><td class="col-patient"><strong>None &mdash; the workaround is a primary lens</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="lenses">
+  <div class="container">
+    <p class="eyebrow-section">02 &mdash; The five lenses</p>
+    <h2>The method.</h2>
+    <p class="lead">Each lens is a question the network-side model cannot answer. Run all five against a device, a finding, or a whole environment, and the risk register reorders itself. The order it lands in is the order a patient would choose.</p>
+
+    <article class="lens" id="lens-1">
+      <div class="lens-head"><span class="lens-no">01</span><h3>Dependency</h3></div>
+      <p class="lens-q">Is the patient&rsquo;s physiology dependent on this device functioning correctly right now?</p>
+      <div class="lens-body">
+        <div class="lens-cell">
+          <h4>Why network-side models miss it</h4>
+          <p>An asset inventory sees two nodes running the same OS with the same CVE. It cannot see that one of them is keeping a chest rising and the other is archiving vitals for the morning report. Same score. Not remotely the same risk.</p>
+          <p>PSTM tiers every device before anything gets scored:</p>
+          <div class="tier-row">
+            <span class="tier"><b>Life-sustaining</b>ventilator &middot; pump running vasopressors &middot; pacing</span>
+            <span class="tier"><b>Life-supporting</b>dialysis &middot; BiPAP &middot; anesthesia delivery</span>
+            <span class="tier"><b>Monitoring / diagnostic</b>telemetry &middot; CGM &middot; imaging</span>
+            <span class="tier"><b>Convenience</b>bed scales &middot; asset tags &middot; smart TVs</span>
+          </div>
+        </div>
+        <div class="lens-cell">
+          <h4>From the floor</h4>
+          <p>The same vulnerability disclosure lands on a networked ventilator and on the server that stores its historical trend data. The register scores them identically. On the ventilator, exploitation is a code blue. On the archive, it&rsquo;s a breach-notification workflow. Any model that can&rsquo;t separate those two outcomes isn&rsquo;t modeling healthcare &mdash; it&rsquo;s modeling a data center that happens to contain patients.</p>
+        </div>
+      </div>
+      <p class="lens-verdict"><span>What changes</span>On life-sustaining tiers, availability and integrity outrank confidentiality by orders of magnitude. Most risk registers have it exactly backwards.</p>
+    </article>
+
+    <article class="lens" id="lens-2">
+      <div class="lens-head"><span class="lens-no">02</span><h3>Latency to Harm</h3></div>
+      <p class="lens-q">How long from compromise to physiological harm?</p>
+      <div class="lens-body">
+        <div class="lens-cell">
+          <h4>Why network-side models miss it</h4>
+          <p>CVSS measures exploitability and impact to the system. It has no axis for how fast a human deteriorates. Two findings with the same score can sit on opposite ends of the only clock that matters at the bedside.</p>
+          <div class="lat-grid">
+            <div class="lat"><b>Minutes</b><span>Infusion pump dose manipulation. Ventilator settings. Pacing parameters.</span></div>
+            <div class="lat"><b>Hours</b><span>Telemetry suppression. Alarm rerouting. Lab interface tampering.</span></div>
+            <div class="lat"><b>Days</b><span>EHR record tampering. Imaging integrity. Allergy fields quietly edited.</span></div>
+          </div>
+        </div>
+        <div class="lens-cell">
+          <h4>From the floor</h4>
+          <p>A suppressed telemetry alarm hurts no one at minute one. It hurts someone at hour three, when the rhythm changes and nothing sounds. A deleted allergy field hurts no one for days &mdash; until the next admission, the next order, the next push of the wrong drug. Latency isn&rsquo;t a technicality. It is the response window, and it tells you which findings you fix tonight and which can wait for the change window.</p>
+        </div>
+      </div>
+      <p class="lens-verdict"><span>What changes</span>Latency to harm, not CVSS score, drives patch and response prioritization in clinical environments.</p>
+    </article>
+
+    <article class="lens" id="lens-3">
+      <div class="lens-head"><span class="lens-no">03</span><h3>Bedside Detectability</h3></div>
+      <p class="lens-q">Would a clinician actually notice?</p>
+      <div class="lens-body">
+        <div class="lens-cell">
+          <h4>Why network-side models miss it</h4>
+          <p>Detection engineering ends at the SOC. But a &ldquo;detected&rdquo; event in the SOC is not a detected event on the floor. Most IoMT compromise is silent at the point of care: the device keeps displaying what the clinician expects to see, and the clinician has four other patients.</p>
+          <p>Alarm fatigue makes it worse &mdash; it is an attacker&rsquo;s ally. Clinical staff silence hundreds of alarms per shift because most of them mean nothing. An attacker doesn&rsquo;t have to hide the alarm. The environment hides it for them.</p>
+        </div>
+        <div class="lens-cell">
+          <h4>From the floor</h4>
+          <p>A compromised pump can display the ordered rate while delivering a different one. There is no visual difference at the bedside between a pump that is working and a pump that is lying. The nurse checks the screen &mdash; that&rsquo;s the verification step the workflow allows &mdash; and the screen confirms the order. Every control downstream of that glance assumes the glance means something.</p>
+        </div>
+      </div>
+      <p class="lens-verdict"><span>What changes</span>Detection engineering for clinical environments must account for the human at the bedside, not just the sensor on the wire.</p>
+    </article>
+
+    <article class="lens" id="lens-4">
+      <div class="lens-head"><span class="lens-no">04</span><h3>Workaround Pressure</h3></div>
+      <p class="lens-q">What do clinicians do when the control gets in the way of care?</p>
+      <div class="lens-body">
+        <div class="lens-cell">
+          <h4>Why network-side models miss it</h4>
+          <p>Shared logins. Propped doors. A badge taped over the reader. Screens left unlocked because the timeout fires mid-code. Every one of them was invented by a rational person trying to keep a patient alive.</p>
+          <p><strong>The workaround is the vulnerability.</strong> No scanner finds it, no register scores it, and no network-side model can produce this lens &mdash; because producing it requires having been the clinician who invented the workaround.</p>
+        </div>
+        <div class="lens-cell">
+          <h4>From the floor</h4>
+          <p>I have been the clinician the screen timeout fired on &mdash; mid-resuscitation, gloves on, seconds mattering. The next shift, that workstation stays logged in as whoever touched it first. Security calls that an audit finding. The floor calls it Tuesday. Design the control for the code, not the demo, or the floor will redesign it for you.</p>
+        </div>
+      </div>
+      <p class="lens-verdict"><span>What changes</span>A control that clinicians route around is a control that does not exist. Controls must survive the bedside, or they aren&rsquo;t controls.</p>
+    </article>
+
+    <article class="lens" id="lens-5">
+      <div class="lens-head"><span class="lens-no">05</span><h3>Downtime Survivability</h3></div>
+      <p class="lens-q">When the system fails, does the manual fallback actually work &mdash; and has anyone on shift ever run it?</p>
+      <div class="lens-body">
+        <div class="lens-cell">
+          <h4>Why network-side models miss it</h4>
+          <p>The register ends where the outage begins. Paper downtime procedures exist on paper. Most staff hired after 2015 have never executed one &mdash; never charted a med pass by hand, never run orders on carbon-copy forms, never worked a floor where the EHR simply is not coming back this shift.</p>
+        </div>
+        <div class="lens-cell">
+          <h4>From the floor</h4>
+          <p>Downtime survivability is a set of testable questions. Are the downtime forms in the box current? Does the charge nurse know where the box is? Is the read-only EHR snapshot fresher than 24 hours? Has anyone on nights &mdash; the shift ransomware actually hits &mdash; run a paper med pass end to end? Every one of those has a yes/no answer. Almost nobody asks.</p>
+        </div>
+      </div>
+      <p class="lens-verdict"><span>What changes</span>Ransomware resilience in healthcare is a training and process problem at least as much as a technical one. The fallback is testable &mdash; so test it.</p>
+    </article>
+  </div>
+</section>
+
+<section id="worked" class="alt">
+  <div class="container">
+    <p class="eyebrow-section">03 &mdash; Worked example &middot; Scenario 03</p>
+    <h2>One scenario. Two priority lists.</h2>
+    <p class="lead"><a href="index.html#scenarios" style="color:var(--text);">Scenario 03 in this lab</a> is an infusion pump compromise on an oncology floor: a networked pump receives unauthorized parameter updates during active chemotherapy delivery, while the nurse covers four other patients. Below are six findings a standard assessment of that environment produces &mdash; scored the way a network-side register scores them, then run through the five lenses.</p>
+
+    <div class="findings">
+      <div class="finding"><span class="f-id">F1</span><span class="f-text"><strong>Unauthenticated remote code execution</strong> in the pump&rsquo;s legacy remote-management service.</span><span class="f-cvss">CVSS 9.8</span></div>
+      <div class="finding"><span class="f-id">F2</span><span class="f-text"><strong>Drug-library updates accepted unsigned</strong> from any host on the clinical VLAN &mdash; dose limits and concentrations can be rewritten in transit.</span><span class="f-cvss">CVSS 8.8</span></div>
+      <div class="finding"><span class="f-id">F3</span><span class="f-text"><strong>PHI transmitted in cleartext</strong> between the pump gateway and the integration engine.</span><span class="f-cvss">CVSS 7.5</span></div>
+      <div class="finding"><span class="f-id">F4</span><span class="f-text"><strong>Flat clinical VLAN</strong> &mdash; the pump fleet shares a network segment with non-clinical systems.</span><span class="f-cvss">CVSS 6.5</span></div>
+      <div class="finding"><span class="f-id">F5</span><span class="f-text"><strong>Shared login on the med-room workstation;</strong> screen lock disabled by staff.</span><span class="f-cvss">No CVE &middot; unscored</span></div>
+      <div class="finding"><span class="f-id">F6</span><span class="f-text"><strong>Paper downtime medication procedure last exercised 2019;</strong> night shift never drilled.</span><span class="f-cvss">No CVE &middot; unscored</span></div>
+    </div>
+
+    <div class="reorder">
+      <div class="rcol">
+        <div class="rcol-head"><h4>Network-side register</h4><p>Ordered by CVSS</p></div>
+        <div class="rrow"><span class="rrow-rank">1</span><span class="rrow-id">F1</span><span class="rrow-why">9.8 &mdash; critical. Remote code execution tops every list it appears on.</span></div>
+        <div class="rrow"><span class="rrow-rank">2</span><span class="rrow-id">F2</span><span class="rrow-why">8.8 &mdash; high. Unsigned update channel.</span></div>
+        <div class="rrow"><span class="rrow-rank">3</span><span class="rrow-id">F3</span><span class="rrow-why">7.5 &mdash; high. Cleartext PHI in transit.</span></div>
+        <div class="rrow"><span class="rrow-rank">4</span><span class="rrow-id">F4</span><span class="rrow-why">6.5 &mdash; medium. Segmentation gap.</span></div>
+        <div class="rrow rrow-absent"><span class="rrow-rank">&mdash;</span><span class="rrow-id">F5</span><span class="rrow-why">Not on the register. No CVE to score.</span></div>
+        <div class="rrow rrow-absent"><span class="rrow-rank">&mdash;</span><span class="rrow-id">F6</span><span class="rrow-why">Not on the register. Not a technical finding.</span></div>
+      </div>
+      <div class="rcol rcol-patient">
+        <div class="rcol-head"><h4>Patient-side re-prioritization</h4><p>Ordered by the five lenses</p></div>
+        <div class="rrow"><span class="rrow-rank">1</span><span class="rrow-id">F2</span><span class="rrow-why"><strong>The finding that reaches the patient.</strong><span class="tag-crit">Critical</span><br>Life-sustaining tier &middot; latency in minutes &middot; bedside detectability near zero &mdash; the pump displays the ordered dose while delivering a different one. <span class="lens-ref">Lenses 01 &middot; 02 &middot; 03</span></span></div>
+        <div class="rrow"><span class="rrow-rank">2</span><span class="rrow-id">F1</span><span class="rrow-why">Same fleet, louder failure. Exploitation most plausibly crashes the pump: the infusion stops, the alarm sounds, the nurse sees it. Serious &mdash; and visible. <span class="lens-ref">Lenses 01 &middot; 03</span></span></div>
+        <div class="rrow"><span class="rrow-rank">3</span><span class="rrow-id">F6</span><span class="rrow-why">The response to rank 1 or 2 is &ldquo;pull the fleet.&rdquo; That plan is only as real as a paper fallback nobody has run since 2019. <span class="lens-ref">Lens 05</span></span></div>
+        <div class="rrow"><span class="rrow-rank">4</span><span class="rrow-id">F5</span><span class="rrow-why">The audit trail you&rsquo;d need to investigate F1 or F2 is already gone &mdash; when everyone charts as everyone, attribution dies first. <span class="lens-ref">Lens 04</span></span></div>
+        <div class="rrow"><span class="rrow-rank">5</span><span class="rrow-id">F4</span><span class="rrow-why">The enabler. It widens the path to F1 and F2; on its own it touches no one.</span></div>
+        <div class="rrow"><span class="rrow-rank">6</span><span class="rrow-id">F3</span><span class="rrow-why">The register&rsquo;s #3. Real, reportable, worth fixing &mdash; and the only finding here where nobody&rsquo;s physiology changes.</span></div>
+      </div>
+    </div>
+
+    <div class="punchline">
+      <p>Two of the top four patient-side risks never appeared on the network-side register at all. The register&rsquo;s number three landed last. Same environment, same findings &mdash; a different question. That reordering is the method.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mapping">
+  <div class="container">
+    <p class="eyebrow-section">04 &mdash; Framework mapping</p>
+    <h2>PSTM does not replace your frameworks. It reorders them by patient consequence.</h2>
+    <p class="lead">Every lens lands inside controls that assessors already recognize. That is deliberate: PSTM output drops into an existing GRC program &mdash; it re-ranks the register, it doesn&rsquo;t invent a new one.</p>
+    <div class="tbl-wrap">
+      <table>
+        <caption>Where each lens lands in the standards you already run</caption>
+        <thead>
+          <tr><th scope="col">PSTM lens</th><th scope="col">NIST CSF 2.0</th><th scope="col">HIPAA Security Rule</th><th scope="col">FDA Pre/Postmarket</th><th scope="col">IEC 62443</th><th scope="col">HHS 405(d) HICP</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">01 Dependency</th><td>ID.AM &mdash; assets prioritized by criticality</td><td>&sect;164.308(a)(7)(ii)(E) criticality analysis</td><td>Premarket: security risk assessment tied to safety risk (ISO 14971)</td><td>Zone criticality &amp; security-level targets (62443&#8209;3&#8209;2)</td><td>IT asset management</td></tr>
+          <tr><th scope="row">02 Latency to harm</th><td>ID.RA &mdash; risk analysis; response prioritization</td><td>&sect;164.308(a)(1)(ii)(A) risk analysis</td><td>Postmarket: exploitability plus severity of patient harm</td><td>Consequence-driven risk assessment (62443&#8209;3&#8209;2)</td><td>Vulnerability management</td></tr>
+          <tr><th scope="row">03 Bedside detectability</th><td>DE.CM / DE.AE &mdash; monitoring &amp; event analysis</td><td>&sect;164.312(b) audit controls</td><td>Premarket: design for detection of security events</td><td>Timely event response &amp; monitoring (SR 6.x)</td><td>Security operations &amp; incident detection</td></tr>
+          <tr><th scope="row">04 Workaround pressure</th><td>PR.AA access control; PR.AT training</td><td>&sect;164.308(a)(5) workforce security &amp; training</td><td>Human factors &amp; usability engineering guidance</td><td>Identification &amp; authentication (SR 1.x), fit for clinical workflow</td><td>Identity &amp; access management</td></tr>
+          <tr><th scope="row">05 Downtime survivability</th><td>RS / RC &mdash; response &amp; recovery</td><td>&sect;164.308(a)(7) contingency plan; (ii)(D) testing &amp; revision</td><td>Postmarket: response, resilience &amp; recovery expectations</td><td>Backup &amp; system recovery (SR 7.3 / 7.4)</td><td>Data protection &amp; incident response planning</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="index" class="alt">
+  <div class="container">
+    <p class="eyebrow-section">05 &mdash; Scenario index</p>
+    <h2>These are not hypotheticals. Each is a Patient-Side Threat Model.</h2>
+    <p class="idx-note">Every scenario in this lab exercises specific lenses. The tags below say which &mdash; use them to jump straight to the failure mode you&rsquo;re accountable for.</p>
+    <div class="tbl-wrap">
+      <table>
+        <caption>DFR Lab scenarios, tagged by PSTM lens</caption>
+        <thead>
+          <tr><th scope="col">#</th><th scope="col">Scenario</th><th scope="col">Severity</th><th scope="col">Lenses exercised</th><th scope="col"></th></tr>
+        </thead>
+        <tbody>
+          <tr><td>S01</td><td><strong>Silent Battery Failure</strong> &mdash; portable O&#8322; concentrator</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">01 Dependency</span><span class="idx-lens">02 Latency</span><span class="idx-lens">05 Downtime</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S02</td><td><strong>AI Triage Override</strong> &mdash; emergency department</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">03 Detectability</span><span class="idx-lens">04 Workaround</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S03</td><td><strong>Infusion Pump Network Compromise</strong> &mdash; the worked example above</td><td><span class="sev-txt">High</span></td><td><span class="idx-lens">01 Dependency</span><span class="idx-lens">02 Latency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S04</td><td><strong>OSINT Recon on Hospital Infrastructure</strong></td><td><span class="sev-txt">High</span></td><td><span class="idx-lens">01 Dependency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S05</td><td><strong>Wearable Data Spoofing</strong> &mdash; athlete &amp; patient, same failure</td><td><span class="sev-txt">High</span></td><td><span class="idx-lens">02 Latency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S06</td><td><strong>Ransomware in the ER</strong> &mdash; the 2am decision</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">02 Latency</span><span class="idx-lens">04 Workaround</span><span class="idx-lens">05 Downtime</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S07</td><td><strong>CPAP Firmware Vulnerability</strong> &mdash; connected home therapy</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">01 Dependency</span><span class="idx-lens">02 Latency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S08</td><td><strong>Dementia Home Health Failure Chain</strong> &mdash; a patient who cannot self-advocate</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">01 Dependency</span><span class="idx-lens">03 Detectability</span><span class="idx-lens">05 Downtime</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S09</td><td><strong>CGM Signal Compromise</strong> &mdash; dosing on manipulated data</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">01 Dependency</span><span class="idx-lens">02 Latency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="index.html#scenarios">Open &rarr;</a></td></tr>
+          <tr><td>S10</td><td><strong>AI Symptom Checker, Steered</strong> &mdash; indirect prompt injection downgrades an emergency</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">02 Latency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="ai-red-team.html">Open &rarr;</a></td></tr>
+          <tr><td>S11</td><td><strong>System Prompt Leakage</strong> &mdash; a clinical assistant gives up its guardrails</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">02 Latency</span><span class="idx-lens">03 Detectability</span></td><td><a class="idx-link" href="ai-red-team.html">Open &rarr;</a></td></tr>
+          <tr><td>S12</td><td><strong>Over-Permissioned Scheduling Agent</strong> &mdash; harm at machine speed</td><td><span class="sev-txt is-crit">Critical</span></td><td><span class="idx-lens">02 Latency</span><span class="idx-lens">05 Downtime</span></td><td><a class="idx-link" href="ai-red-team.html">Open &rarr;</a></td></tr>
+          <tr><td>&mdash;</td><td><strong>Healthcare Ransomware Intelligence Tracker</strong> &mdash; PSTM applied at population scale</td><td><span class="sev-txt">Live</span></td><td><span class="idx-lens">02 Latency</span><span class="idx-lens">05 Downtime</span></td><td><a class="idx-link" href="tracker.html">Open &rarr;</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" id="engage">
+  <div class="container">
+    <p class="cta-eyebrow">06 &mdash; Put it to work</p>
+    <h2>Bring Patient-Side Threat Modeling to your team.</h2>
+    <p class="lead">Four ways in: a <strong>Patient-Side Threat Assessment</strong> of your connected-device environment, a <strong>Clinical Ransomware Tabletop</strong> with scenarios that survive contact with clinicians in the room, <strong>Healthcare GRC &amp; Audit Readiness</strong> mapped to clinical workflow, or standing <strong>Advisory &amp; Expert Engagement</strong>. No rate card on a webpage. Book the call.</p>
+    <div class="cta-actions">
+      <a class="btn btn-amber" href="https://chaundacdallas.com/intake?service=consult">Book a call</a>
+      <a class="btn btn-ghost" href="https://chaundacdallas.com/method">The framework in full &rarr;</a>
+    </div>
+    <p class="cta-fine">Speaking, media, or expert-network inquiries: <a href="mailto:connect@chaundacdallas.com">connect@chaundacdallas.com</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div>
+    <div class="footer-brand">DFR <span>Lab</span></div>
+    <p class="footer-tag">I didn&rsquo;t leave healthcare. I learned to defend it.</p>
+  </div>
+  <div class="footer-links">
+    <a href="index.html">Lab home</a>
+    <a href="index.html#scenarios">Scenarios</a>
+    <a href="ai-red-team.html">AI Red Team</a>
+    <a href="tracker.html">Intel Tracker</a>
+    <a href="https://chaundacdallas.com">chaundacdallas.com</a>
+    <a href="https://linkedin.com/in/chaundacdallas" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+  <div class="footer-copy">&#169; 2026 Chaunda C. Dallas LLC &mdash; All rights reserved &middot; Patient-Side Threat Modeling&#8482; is the work of Chaunda C. Dallas</div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement,btn=document.getElementById('themeBtn'),lbl=document.getElementById('themeLbl');
+  function set(t){root.setAttribute('data-theme',t);lbl.textContent=(t==='dark'?'Light':'Dark');}
+  set('dark');
+  btn.addEventListener('click',function(){set(root.getAttribute('data-theme')==='dark'?'light':'dark');});
+})();
+</script>
+</body>
+</html>
